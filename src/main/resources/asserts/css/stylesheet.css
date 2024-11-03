@@ -1,0 +1,211 @@
+-------------------------------------- BUTTONS & ICON -----------------------------------------
+
+
+.btnLogin{
+    -fx-background-color:  transparent;
+    -fx-border-color:  transparent;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.btnLogin:hover{
+    -fx-background-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 6, 0, 0, 1);
+}
+
+.icon{
+    -fx-effect: dropshadow(gaussian, transparent, 0, 0, 0, 0);
+}
+
+.icon:hover{
+    -fx-effect: dropshadow(gaussian, #E48F45, 5, 0, 0, 0.5);
+}
+
+.sidebarBtn{
+    -fx-background-color:  transparent;
+    -fx-background-radius: 0px 0px 0px 0px;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.sidebarBtn:hover{
+    -fx-background-color:  #E48F45;
+    -fx-background-radius: 0px 30px 30px 0px;
+    -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s;
+    -fx-border-color:  #E48F45;
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+}
+
+.sidebarBtn:pressed{
+    -fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-background-radius: 0px 30px 30px 0px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s;
+    -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+}
+
+.sidebarIcon{
+    -fx-background-color:  transparent;
+    -fx-background-radius: 0px 0px 0px 0px;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.sidebarIcon:hover{
+    -fx-background-color:  #E48F45a1;
+    -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s;
+    -fx-border-color:  #6B240C;
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+}
+
+.sidebarIcon:pressed{
+    -fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-effect: dropshadow(gaussian, #E48F45, 10, 0, 0, 0);
+    -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s;
+    -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+}
+
+.menuItem-nomal{
+    -fx-text-fill: White;
+}
+
+.menuItem:hover{
+    -fx-border-color: #6B240C;
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-text-fill: #6B240C;
+}
+
+
+.menuBtnSelected{
+    -fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #E48F45 100.0%);
+    -fx-effect: dropshadow(gaussian, #E48F45, 10, 0, 0, 0);
+}
+
+.saveBtn{
+    -fx-background-color:  #6B240C;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.saveBtn:hover{
+    -fx-background-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 6, 0, 0, 1);
+}
+
+.removeBtn{
+    -fx-background-color:  #6B240C;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.removeBtn:hover{
+    -fx-background-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 6, 0, 0, 1);
+}
+
+.updateBtn{
+    -fx-background-color:  #6B240C;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.updateBtn:hover{
+    -fx-background-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 6, 0, 0, 1);
+}
+
+.clearBtn{
+    -fx-background-color:  #6B240C;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.clearBtn:hover{
+    -fx-background-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-color:  linear-gradient(from 50% 0.0% to 50% 100.0%, #994D1C 0.0%, #E48F45 100.0%);
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, #E48F45, 6, 0, 0, 1);
+}
+
+
+-------------------------------------- TEXTFIELD AND OTHER -----------------------------------------
+
+
+.mainScrollPane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.textFiled{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  #994D1C;
+}
+
+.text-field{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  transparent;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+}
+
+.date-picker {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  #994D1C;
+    -fx-font-size: 14px;
+}
+
+.choice-box{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  #994D1C;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+}
+
+.combo-box{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  transparent;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+}
+
+.radio-button{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  transparent;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+}
+
+.list-view{
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color:  #994D1C;
+    -fx-font-size: 14px;
+    -fx-font-family: Arial;
+}
+
+.downBoader{
+    -fx-border-color:  #994D1C;
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-font-size: 14px;
+}
+
+
+
