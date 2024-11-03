@@ -195,7 +195,7 @@
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="25.0" styleClass="textFiled">
                                  <image>
-                                    <Image url="@../asserts/icons/Search_icon.png" />
+                                    <Image url="@asserts/icons/Search_icon.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -212,7 +212,7 @@
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="25.0" styleClass="textFiled">
                                  <image>
-                                    <Image url="@../asserts/icons/Search_icon.png" />
+                                    <Image url="@asserts/icons/Search_icon.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -234,7 +234,7 @@
                      <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0">
                            <image>
-                              <Image url="@../asserts/icons/Save_icon.png" />
+                              <Image url="@asserts/icons/Save_icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -249,7 +249,7 @@
                      <graphic>
                         <ImageView fitHeight="24.0" fitWidth="24.0">
                            <image>
-                              <Image url="@../asserts/icons/Delete_icon.png" />
+                              <Image url="@asserts/icons/Delete_icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -264,7 +264,7 @@
                      <graphic>
                         <ImageView fitHeight="26.0" fitWidth="26.0">
                            <image>
-                              <Image url="@../asserts/icons/Update_icon.png" />
+                              <Image url="@asserts/icons/Update_icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -279,7 +279,7 @@
                      <graphic>
                         <ImageView fitHeight="26.0" fitWidth="26.0">
                            <image>
-                              <Image url="@../asserts/icons/Clear_icon.png" />
+                              <Image url="@asserts/icons/Clear_icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -293,7 +293,7 @@
       </AnchorPane>
    </children>
    <stylesheets>
-      <URL value="@../asserts/css/stylesheet.css" />
-      <URL value="@../asserts/css/TableStyle.css" />
+      <URL value="@asserts/css/stylesheet.css" />
+      <URL value="@asserts/css/TableStyle.css" />
    </stylesheets>
 </AnchorPane>

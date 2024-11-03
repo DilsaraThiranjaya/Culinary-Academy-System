@@ -168,7 +168,7 @@ public class ForgotPasswordController {
 
     @FXML
     void btnLoginOnAction(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Login_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Login_page.fxml"));
 
         Stage stage = new Stage();
 

@@ -38,76 +38,28 @@ import java.time.format.DateTimeFormatter;
 public class DashboardController {
 
     @FXML
-    private JFXButton btnAttendances;
-
-    @FXML
-    private JFXButton btnEmployees;
-
-    @FXML
-    private JFXButton btnPayments;
-
-    @FXML
-    private JFXButton btnSalaries;
-
-    @FXML
-    private JFXButton btnStudents;
-
-    @FXML
-    private JFXButton btnVehicles;
-
-    @FXML
-    private JFXButton btnExams;
-
-    @FXML
-    private JFXButton btnSchedule;
-
-    @FXML
-    private JFXButton btnCourses;
-
-    @FXML
     private JFXButton btnSettings;
-
-    @FXML
-    private Label lblTime;
-
-    @FXML
-    private Label lblDate;
 
     @FXML
     private HBox iconSettings;
 
     @FXML
-    private HBox iconAttendances;
+    private JFXButton btnPayments;
+
+    @FXML
+    private JFXButton btnStudents;
+
+    @FXML
+    private JFXButton btnCourses;
 
     @FXML
     private HBox iconCourses;
 
     @FXML
-    private HBox iconEmployees;
-
-    @FXML
-    private HBox iconExams;
-
-    @FXML
     private HBox iconPayments;
 
     @FXML
-    private HBox iconSalaries;
-
-    @FXML
-    private HBox iconSchedules;
-
-    @FXML
     private HBox iconStudents;
-
-    @FXML
-    private HBox iconVehicles;
-
-    @FXML
-    private Label menu;
-
-    @FXML
-    private Label menuClose;
 
     @FXML
     private AnchorPane rootNode;
@@ -142,8 +94,6 @@ public class DashboardController {
 
     private UserDTO user;
 
-    private TaskBarController taskBarController;
-
     private WindowController windowController;
 
     private double xOffset = 0;
@@ -154,75 +104,22 @@ public class DashboardController {
 
 
     public void initialize() {
-        setSidebar();
-        setTimeAndDate();
-
         sidebarButtonHoverUtilize();
     }
 
     public void disableSidebarButtons() {
-        btnAttendances.setDisable(true);
-        btnEmployees.setDisable(true);
-        btnPayments.setDisable(true);
-        btnSalaries.setDisable(true);
-        btnStudents.setDisable(true);
-        btnExams.setDisable(true);
-        btnSchedule.setDisable(true);
-        btnCourses.setDisable(true);
-        iconAttendances.setDisable(true);
-        iconEmployees.setDisable(true);
-        iconPayments.setDisable(true);
-        iconSalaries.setDisable(true);
-        iconStudents.setDisable(true);
-        iconExams.setDisable(true);
-        iconSchedules.setDisable(true);
-        iconCourses.setDisable(true);
-    }
-
-    private void setTimeAndDate() {
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), event -> {
-                    // Update the label with the current time
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
-                    lblTime.setText(formatter.format(currentTime));
-                })
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE); // Repeat indefinitely
-        timeline.play();
-
-        LocalDate date = LocalDate.now();
-        lblDate.setText(date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+        btnPayments.setVisible(false);
+        iconPayments.setVisible(false);
     }
 
     public void setWindowController(WindowController windowController) {
         this.windowController = windowController;
     }
 
-    private void setTaskBar() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/lk.ijse.pos/TaskBar.fxml"));
-
-        try {
-            AnchorPane taskBar = loader.load();
-
-            taskBarController = loader.getController();
-            taskBarController.setUser(user);
-            taskBarController.setRootNode(rootNode);
-
-            taskBarPane.getChildren().add(taskBar); // Add the loaded task bar to the taskBarPane
-            AnchorPane.setTopAnchor(taskBar, 0.0);
-            AnchorPane.setLeftAnchor(taskBar, 0.0);
-            AnchorPane.setRightAnchor(taskBar, 0.0);
-            AnchorPane.setBottomAnchor(taskBar, 0.0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void setUser(UserDTO user) {
         this.user = user;
         setUiUsername();
-        setTaskBar();
         setDisabledButton();
     }
 
@@ -251,23 +148,17 @@ public class DashboardController {
     }
 
     private void sidebarButtonHoverUtilize() {
-        addHoverEffect(btnEmployees,iconEmployees);
         addHoverEffect(btnStudents,iconStudents);
-        addHoverEffect(btnSalaries,iconSalaries);
         addHoverEffect(btnPayments,iconPayments);
-        addHoverEffect(btnVehicles,iconVehicles);
-        addHoverEffect(btnExams,iconExams);
-        addHoverEffect(btnSchedule,iconSchedules);
         addHoverEffect(btnCourses,iconCourses);
-        addHoverEffect(btnAttendances,iconAttendances);
         addHoverEffect(btnSettings,iconSettings);
-        addHoverEffect(lblRegistor,ivRegistorIcon, "/lk.ijse.pos/asserts/icons/hover/Registor_icon_hover.png", "/lk.ijse.pos/asserts/icons/Registor_icon.png");
-        addHoverEffect(lblLogout,ivLogoutIcon, "/lk.ijse.pos/asserts/icons/hover/Logout_icon_hover.png", "/lk.ijse.pos/asserts/icons/Logout_icon.png");
+        addHoverEffect(lblRegistor,ivRegistorIcon, "/lk.ijse.cas/asserts/icons/hover/Registor_icon_hover.png", "/lk.ijse.cas/asserts/icons/Registor_icon.png");
+        addHoverEffect(lblLogout,ivLogoutIcon, "/lk.ijse.cas/asserts/icons/hover/Logout_icon_hover.png", "/lk.ijse.cas/asserts/icons/Logout_icon.png");
     }
 
     public void addHoverEffect(Label button, ImageView icon, String hoverPath, String defaultPath) {
         button.setOnMouseEntered(event -> {
-                button.setStyle("-fx-text-fill: #0504AA; -fx-border-color: #0504AA; -fx-border-width: 0px 0px 2px 0px;");
+                button.setStyle("-fx-text-fill: #6B240C; -fx-border-color: #6B240C; -fx-border-width: 0px 0px 2px 0px;");
 
                 Image hoverIcon = new Image(hoverPath);
                 icon.setImage(hoverIcon);
@@ -284,8 +175,8 @@ public class DashboardController {
     public void addHoverEffect(JFXButton button, HBox icon) {
         button.setOnMouseEntered(event -> {
             if (button != selectedButton) {
-                button.setStyle("-fx-background-color:  #4dcaf0a1; -fx-background-radius: 0px 30px 30px 0px; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #4dcaf0a1; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
-                icon.setStyle("-fx-background-color:  #4dcaf0a1; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #0504AA; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
+                button.setStyle("-fx-background-color:  #E48F45a1; -fx-background-radius: 0px 30px 30px 0px; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #E48F45a1; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
+                icon.setStyle("-fx-background-color:  #E48F45a1; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #6B240C; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
             }
         });
 
@@ -298,8 +189,8 @@ public class DashboardController {
 
         icon.setOnMouseEntered(event -> {
             if (button != selectedButton) {
-                button.setStyle("-fx-background-color:  #4dcaf0a1; -fx-background-radius: 0px 30px 30px 0px; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #4dcaf0a1; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
-                icon.setStyle("-fx-background-color:  #4dcaf0a1; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #0504AA; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
+                button.setStyle("-fx-background-color:  #E48F45a1; -fx-background-radius: 0px 30px 30px 0px; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #E48F45a1; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
+                icon.setStyle("-fx-background-color:  #E48F45a1; -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  #6B240C; -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
             }
         });
 
@@ -319,8 +210,8 @@ public class DashboardController {
             selectedButton = btnEmployees; // Set the initial selected button
             selectedIcon = iconEmployees;
         }
-        selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #4169e1 0.0%, #4cc9f0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #4CC9F0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #4169e1 0.0%, #4cc9f0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
-        selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #0504AA 0.0%, #4cc9f0 100.0%); -fx-effect: dropshadow(gaussian, #4CC9F0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #0504AA 0.0%, #4cc9f0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
+        selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
+        selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
     }
 
     private void handleSelection(JFXButton button, HBox icon) {
@@ -329,68 +220,23 @@ public class DashboardController {
 
         }
         selectedButton = button; // Set the new selected button
-        selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #4169e1 0.0%, #4cc9f0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #4CC9F0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #4169e1 0.0%, #4cc9f0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
+        selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
 
         if (selectedIcon != null) {
             selectedIcon.setStyle(" -fx-background-color:  transparent; -fx-background-radius: 0px 0px 0px 0px; -fx-border-width: 0px 0px 0px 0px;");
 
         }
         selectedIcon = icon;
-        selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #0504AA 0.0%, #4cc9f0 100.0%); -fx-effect: dropshadow(gaussian, #4CC9F0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #0504AA 0.0%, #4cc9f0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
-    }
-
-    public void setSidebar(){
-        menuClose.setVisible(false);
-        sidebar.setTranslateX(-277);
-        menu.setOnMouseClicked(event -> {
-            TranslateTransition slide = new TranslateTransition();
-            slide.setDuration(Duration.seconds(0.4));
-            slide.setNode(sidebar);
-
-            slide.setToX(0);
-            slide.play();
-
-            sidebar.setTranslateX(-277);
-
-            slide.setOnFinished((ActionEvent e) -> {
-                menu.setVisible(false);
-                menuClose.setVisible(true);
-            });
-        });
-
-        menuClose.setOnMouseClicked(event -> {
-            TranslateTransition slide = new TranslateTransition();
-            slide.setDuration(Duration.seconds(0.4));
-            slide.setNode(sidebar);
-
-            slide.setToX(-277);
-            slide.play();
-
-            sidebar.setTranslateX(0);
-
-            slide.setOnFinished((ActionEvent e) -> {
-                menu.setVisible(true);
-                menuClose.setVisible(false);
-            });
-        });
+        selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
     }
 
     public void loadPage(String page) {
         AnchorPane root = null;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/lk.ijse.pos/" + page + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/lk.ijse.cas/" + page + ".fxml"));
             root = loader.load();
 
-            // If the page is Vehicle_page, get the VehicleController instance and set the DashboardController
-            if (page.equals("Vehicle_page")) {
-                VehicleController vehicleController = loader.getController();
-                vehicleController.setDashboardController(this);
-            }
-            if (page.equals("Vehicle_maintenance_page")) {
-                VehicleMaintenanceController vehicleMaintenanceController = loader.getController();
-                vehicleMaintenanceController.setDashboardController(this);
-            }
             if (page.equals("Setting_page")) {
                 SettingsController settingsController = loader.getController();
                 settingsController.setUser(user);
@@ -406,7 +252,7 @@ public class DashboardController {
 
     @FXML
     void btnLogoutOnClicked(MouseEvent event) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Login_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Login_page.fxml"));
         StackPane loginRoot = null;
         try {
             loginRoot = loader.load();
@@ -447,7 +293,7 @@ public class DashboardController {
 
         Parent root = null;
         try {
-            root = FXMLLoader.load(this.getClass().getResource("/lk.ijse.pos/Register_page.fxml"));
+            root = FXMLLoader.load(this.getClass().getResource("/lk.ijse.cas/Register_page.fxml"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -463,27 +309,9 @@ public class DashboardController {
     }
 
     @FXML
-    void btnAttendancesOnClicked(MouseEvent event) {
-        loadPage("Attendance_page");
-        handleSelection(btnAttendances,iconAttendances);
-    }
-
-    @FXML
     void btnCoursesOnClicked(MouseEvent event) {
         loadPage("Course_page");
         handleSelection(btnCourses,iconCourses);
-    }
-
-    @FXML
-    void btnEmployeesOnClicked(MouseEvent event) {
-        loadPage("Employee_page");
-        handleSelection(btnEmployees,iconEmployees);
-    }
-
-    @FXML
-    void btnExamsOnClicked(MouseEvent event) {
-        loadPage("Exam_page");
-        handleSelection(btnExams,iconExams);
     }
 
     @FXML
@@ -493,27 +321,9 @@ public class DashboardController {
     }
 
     @FXML
-    void btnSalariesOnClicked(MouseEvent event) {
-        loadPage("Salary_page");
-        handleSelection(btnSalaries,iconSalaries);
-    }
-
-    @FXML
     void btnStudentsOnClicked(MouseEvent event) {
         loadPage("Student_page");
         handleSelection(btnStudents,iconStudents);
-    }
-
-    @FXML
-    void btnVehiclesOnClicked(MouseEvent event) {
-        loadPage("Vehicle_page");
-        handleSelection(btnVehicles,iconVehicles);
-    }
-
-    @FXML
-    void btnSchedulesOnClicked(MouseEvent event) {
-        loadPage("Lesson_schedule_page");
-        handleSelection(btnSchedule,iconSchedules);
     }
 
     @FXML

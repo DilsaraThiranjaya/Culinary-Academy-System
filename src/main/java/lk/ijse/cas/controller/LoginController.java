@@ -47,7 +47,7 @@ public class LoginController {
 
 
     public void initialize() {
-        Image img = new Image("/lk.ijse.pos/asserts/images/Login_box_side.jpg");
+        Image img = new Image("/lk.ijse.cas/asserts/images/Login_box_side.jpg");
         loginBoxShape.setFill(new ImagePattern(img));
     }
 
@@ -87,7 +87,7 @@ public class LoginController {
     }
 
     private void navigateToTheDashboard() throws IOException, SQLException {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Dashboard_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Dashboard_page.fxml"));
         AnchorPane dashboardRoot = loader.load();
 
         DashboardController dashboardController = loader.getController();
@@ -113,7 +113,7 @@ public class LoginController {
 
     @FXML
     void btnRegisterOnAction(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Primary_Register_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Primary_Register_page.fxml"));
 
         Stage stage = new Stage();
 
@@ -130,7 +130,7 @@ public class LoginController {
         WindowController windowController = new WindowController();
         registorController.setWindowController(windowController);
 
-        Image img = new Image("/lk.ijse.pos/asserts/images/Login_box_side.jpg");
+        Image img = new Image("/lk.ijse.cas/asserts/images/Login_box_side.jpg");
         registorController.setLoginBoxShape(img);
 
         Scene scene = new Scene(registerRoot);
@@ -161,7 +161,7 @@ public class LoginController {
 
     @FXML
     void btnForgotPassOnAction(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Forgot_Password_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Forgot_Password_page.fxml"));
 
         Stage stage = new Stage();
 
@@ -183,7 +183,7 @@ public class LoginController {
         WindowController windowController = new WindowController();
         forgotPasswordController.setWindowController(windowController);
 
-        Image img = new Image("/lk.ijse.pos/asserts/images/Login_box_side.jpg");
+        Image img = new Image("/lk.ijse.cas/asserts/images/Login_box_side.jpg");
         forgotPasswordController.setLoginBoxShape(img);
 
         Scene scene = new Scene(registerRoot);

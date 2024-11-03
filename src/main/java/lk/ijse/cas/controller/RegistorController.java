@@ -151,7 +151,7 @@ public class RegistorController {
 
     @FXML
     void btnLoginOnAction(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.pos/Login_page.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Login_page.fxml"));
 
         Stage stage = new Stage();
 

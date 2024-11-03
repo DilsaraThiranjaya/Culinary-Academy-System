@@ -18,10 +18,6 @@ import lk.ijse.cas.dto.StudentDTO;
 import lk.ijse.cas.view.tdm.CoursePriceTm;
 import lk.ijse.cas.view.tdm.PaymentTm;
 import lk.ijse.cas.util.Regex;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.view.JasperViewer;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -329,21 +325,7 @@ public class PaymentController {
                             if(isSaved){
                                 new Alert(Alert.AlertType.CONFIRMATION, "Payment saved!").show();
                                 refreshTableView();
-
-                                // Create a delay task with 1 seconds delay (1000 milliseconds)
-                                DelayTask delayTask = new DelayTask(1000);
-                                Thread delayThread = new Thread(delayTask);
-                                delayThread.start();
-
-                                // Wait for the delay task to complete before printing
-                                delayTask.setOnSucceeded(delayEvent -> {
-                                    try {
-                                        sendPaymentConfirmationEmail(paymnetId);
-                                        printBill();  // Call the printing task after the delay
-                                    } catch (JRException | SQLException | ClassNotFoundException e) {
-                                        new Alert(Alert.AlertType.ERROR, "Error printing report: " + e.getMessage()).show();
-                                    }
-                                });
+                                sendPaymentConfirmationEmail(paymnetId);
                             }
                         } catch (SQLException e) {
                             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -410,24 +392,6 @@ public class PaymentController {
         } else {
             new Alert(Alert.AlertType.ERROR, "Email not found!").show();
         }
-    }
-
-    private void printBill() throws JRException, SQLException {
-        JasperDesign jasperDesign =
-                JRXmlLoader.load("src/main/resources/lk.ijse.pos/reports/Lms_Jasper_Report.jrxml");
-        JasperReport jasperReport =
-                JasperCompileManager.compileReport(jasperDesign);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("PaymentID",lblPaymentId.getText());
-
-        JasperPrint jasperPrint =
-                JasperFillManager.fillReport(
-                        jasperReport,
-                        data,
-                        DBConnection.getInstance().getConnection());
-
-        JasperViewer.viewReport(jasperPrint,false);
     }
 
     @FXML
@@ -561,29 +525,6 @@ public class PaymentController {
             }
         } else {
             new Alert(Alert.AlertType.WARNING, "Enter a Payment Id!").show();
-        }
-    }
-
-    @FXML
-    void btnPrintOnAction(ActionEvent event) {
-        String paymentId = lblPaymentId.getText();
-        String nextPaymentId = null;
-        try {
-            nextPaymentId = paymentBO.getNextPaymentId();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        if(!(paymentId.equals(nextPaymentId))){
-            try {
-                printBill();
-            } catch (JRException e) {
-                throw new RuntimeException(e);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Payment not found!").show();
         }
     }
 
