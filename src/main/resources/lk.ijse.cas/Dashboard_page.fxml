@@ -64,29 +64,21 @@
                                     <Image url="@asserts/images/Logo.png" />
                                  </image>
                               </ImageView>
+                              <Label layoutX="50.0" layoutY="14.0" prefHeight="35.0" prefWidth="64.0" text="Culinary" textFill="WHITE">
+                                 <font>
+                                    <Font name="Calibri Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="51.0" layoutY="38.0" text="Academy">
+                                 <font>
+                                    <Font name="Calibri Bold" size="10.0" />
+                                 </font>
+                              </Label>
                            </children>
                            <HBox.margin>
-                              <Insets right="1050.0" />
+                              <Insets right="1110.0" />
                            </HBox.margin>
                         </Group>
-                        <Label fx:id="lblRegistor" alignment="CENTER" onMouseClicked="#btnRegistorOnClicked" prefHeight="24.0" prefWidth="122.0" text="Registor" textFill="WHITE">
-                           <font>
-                              <Font name="Arial" size="16.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <graphic>
-                              <ImageView fx:id="ivRegistorIcon" fitHeight="20.0" fitWidth="20.0">
-                                 <image>
-                                    <Image url="@asserts/icons/Registor_icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Label>
                         <Label fx:id="lblLogout" alignment="CENTER" onMouseClicked="#btnLogoutOnClicked" prefHeight="24.0" prefWidth="119.0" text="Log out" textFill="WHITE">
                            <font>
                               <Font name="Arial" size="16.0" />
@@ -187,7 +179,7 @@
                               </HBox>
                               <HBox prefHeight="48.0" prefWidth="307.0">
                                  <children>
-                                    <JFXButton fx:id="btnSettings" alignment="BASELINE_LEFT" onMouseClicked="#btnSettingsOnClicked" prefHeight="60.0" prefWidth="317.0" ripplerFill="#4cc9f04a" stylesheets="@../../../../../../GitHub/LA-CourseWork/src/main/resources/lk.ijse.pos/asserts/css/stylesheet.css" text=" Settings" textFill="WHITE">
+                                    <JFXButton fx:id="btnSettings" alignment="BASELINE_LEFT" onMouseClicked="#btnSettingsOnClicked" prefHeight="60.0" prefWidth="317.0" ripplerFill="#4cc9f04a" stylesheets="@asserts/css/stylesheet.css" text=" Settings" textFill="WHITE">
                                        <font>
                                           <Font name="Arial Black" size="18.0" />
                                        </font>

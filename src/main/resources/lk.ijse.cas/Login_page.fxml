@@ -114,16 +114,6 @@
                   <Font name="Berlin Sans FB" size="25.0" />
                </font>
             </Label>
-            <Label layoutX="529.0" layoutY="489.0" text="Don't have an account ?">
-               <font>
-                  <Font name="Arial" size="12.0" />
-               </font>
-            </Label>
-            <Hyperlink layoutX="660.0" layoutY="486.0" onAction="#btnRegisterOnAction" text="Register">
-               <font>
-                  <Font name="Arial Bold" size="12.0" />
-               </font>
-            </Hyperlink>
             <Hyperlink layoutX="769.0" layoutY="365.0" onAction="#btnForgotPassOnAction" text="Forgot Password ?">
                <font>
                   <Font name="Arial" size="12.0" />

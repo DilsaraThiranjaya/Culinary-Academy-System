@@ -1,6 +1,6 @@
 package lk.ijse.cas.util;
 
-import lk.ijse.hms.entity.*;
+import lk.ijse.cas.entity.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -15,8 +15,10 @@ public class SessionFactoryConfig {
     private SessionFactoryConfig() {
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(Student.class);
-        configuration.addAnnotatedClass(Room.class);
-        configuration.addAnnotatedClass(Reservation.class);
+        configuration.addAnnotatedClass(Course.class);
+        configuration.addAnnotatedClass(Payment.class);
+        configuration.addAnnotatedClass(CourseDetails.class);
+        configuration.addAnnotatedClass(PaymentDetails.class);
         configuration.addAnnotatedClass(User.class);
 
         Properties properties = new Properties();

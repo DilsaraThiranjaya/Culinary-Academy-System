@@ -562,4 +562,10 @@ public class StudentController {
         Regex.setTextColor(TextField.ID,txtSearchbySId);
     }
 
+    public void txtSearchByStudentOnAction(ActionEvent actionEvent) {
+    }
+
+    public void txtSearchByStudentOnKeyRelesed(KeyEvent keyEvent) {
+
+    }
 }

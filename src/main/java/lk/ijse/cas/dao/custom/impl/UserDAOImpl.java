@@ -1,6 +1,5 @@
 package lk.ijse.cas.dao.custom.impl;
 
-import lk.ijse.cas.dao.SQLUtil;
 import lk.ijse.cas.dao.custom.UserDAO;
 import lk.ijse.cas.entity.User;
 

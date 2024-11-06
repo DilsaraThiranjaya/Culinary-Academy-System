@@ -1,7 +1,6 @@
 package lk.ijse.cas.dao.custom.impl;
 
 import lk.ijse.cas.dao.DAOFactory;
-import lk.ijse.cas.dao.SQLUtil;
 import lk.ijse.cas.dao.custom.PaymentDAO;
 import lk.ijse.cas.dao.custom.PaymentDetailsDAO;
 import lk.ijse.cas.entity.Payment;

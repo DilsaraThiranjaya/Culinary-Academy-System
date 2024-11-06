@@ -3,7 +3,6 @@ package lk.ijse.cas.dao.custom.impl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lk.ijse.cas.dao.DAOFactory;
-import lk.ijse.cas.dao.SQLUtil;
 import lk.ijse.cas.dao.custom.CourseDAO;
 import lk.ijse.cas.dao.custom.PaymentDetailsDAO;
 import lk.ijse.cas.entity.PaymentDetails;

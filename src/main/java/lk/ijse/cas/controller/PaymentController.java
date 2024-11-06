@@ -538,4 +538,7 @@ public class PaymentController {
         Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId);
     }
 
+    public void txtUAmountOnKeyRelesed(KeyEvent keyEvent) {
+
+    }
 }

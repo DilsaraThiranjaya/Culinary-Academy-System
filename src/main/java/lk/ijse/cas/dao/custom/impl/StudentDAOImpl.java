@@ -2,7 +2,6 @@ package lk.ijse.cas.dao.custom.impl;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lk.ijse.cas.dao.SQLUtil;
 import lk.ijse.cas.dao.custom.StudentDAO;
 import lk.ijse.cas.entity.Student;
 

@@ -10,8 +10,8 @@ import java.util.Properties;
 public class EmailSender {
     public boolean sendEmail(String recipientEmail, String emailTitle, String emailContent) {
         // Sender's email and password
-        final String senderEmail = "sahanlearnersofficial@gmail.com";
-        final String password = "cjhd slam nhya zvhq";
+        final String senderEmail = "culinaryacademy2024@gmail.com";
+        final String password = "vckh xubt wyay usyu";
 
         // Setup mail server properties
         Properties properties = new Properties();

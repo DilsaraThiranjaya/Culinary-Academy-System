@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 public class PaymentTm {
     private String pId;
     private String date;
-    private String desc;
     private String sId;
     private String sName;
     private String courses;
-    private String amount;
+    private String upfrontP;
+    private String totalP;
     private String pMethod;
+    private String pType;
 }
