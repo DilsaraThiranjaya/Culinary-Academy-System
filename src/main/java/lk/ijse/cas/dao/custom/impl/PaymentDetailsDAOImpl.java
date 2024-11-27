@@ -5,100 +5,159 @@ import javafx.collections.ObservableList;
 import lk.ijse.cas.dao.DAOFactory;
 import lk.ijse.cas.dao.custom.CourseDAO;
 import lk.ijse.cas.dao.custom.PaymentDetailsDAO;
+import lk.ijse.cas.embedded.PaymentDetailsPK;
 import lk.ijse.cas.entity.PaymentDetails;
 import lk.ijse.cas.view.tdm.CoursePriceTm;
+import lk.ijse.cas.util.SessionFactoryConfig;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public class PaymentDetailsDAOImpl implements PaymentDetailsDAO {
-    CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
+    private CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
 
     @Override
-    public boolean save(PaymentDetails entity, ObservableList<CoursePriceTm> cp) throws SQLException, ClassNotFoundException {
-        boolean isSaved = false;
+    public boolean save(PaymentDetails entity, ObservableList<CoursePriceTm> cp) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
 
-        if(cp != null){
-            for(CoursePriceTm cpTm : cp){
-                String paymentId = entity.getPId();
-                if(paymentId != null){
-                    isSaved =  SQLUtil.execute("INSERT INTO paymentDetails VALUES (?, ?)", paymentId, courseDAO.getCourseID(cpTm.getCourse()));
+            if (cp != null) {
+                for (CoursePriceTm cpTm : cp) {
+                    String paymentId = entity.getPaymentDetailsPK().getPaymentId();
+                    if (paymentId != null) {
+                        // Create new PaymentDetails object
+                        PaymentDetails paymentDetails = new PaymentDetails(new PaymentDetailsPK(entity.getPaymentDetailsPK().getPaymentId(), courseDAO.getCourseID(cpTm.getCourse())), null, null);
+                        session.save(paymentDetails);  // Save PaymentDetails entity
+                    }
                 }
             }
-            return isSaved;
+
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
         }
-
-        return false;
     }
 
     @Override
-    public boolean searchAndDeletePaymentDetails(PaymentDetails entity) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT courseId FROM paymentDetails WHERE paymentId = ?", entity.getPId());
+    public boolean searchAndDeletePaymentDetails(PaymentDetails entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
 
-        boolean isDeleted = false;
+            // Fetch all courseIds for a given paymentId
+            String hql = "FROM PaymentDetails pd WHERE pd.paymentDetailsPK.paymentId = :paymentId";
+            List<PaymentDetails> paymentDetailsList = session.createQuery(hql, PaymentDetails.class)
+                    .setParameter("paymentId", entity.getPaymentDetailsPK().getPaymentId())
+                    .getResultList();
 
-        while(resultSet.next()){
-            PaymentDetails paymentDetails = new PaymentDetails(entity.getPId(), resultSet.getString("courseId"));
+            boolean isDeleted = false;
 
-            isDeleted = remove(paymentDetails);
+            // Loop through the list and delete PaymentDetails
+            for (PaymentDetails pd : paymentDetailsList) {
+                session.delete(pd);  // Delete PaymentDetails entity
+                isDeleted = true;
+            }
+
+            transaction.commit();
+            return isDeleted;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
         }
-        return isDeleted;
     }
 
     @Override
-    public boolean save(PaymentDetails entity) throws SQLException, ClassNotFoundException {
+    public boolean save(PaymentDetails entity) {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public boolean isAvailable(PaymentDetails entity) throws SQLException, ClassNotFoundException {
+    public boolean isAvailable(PaymentDetails entity) {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public String getNextId() throws SQLException, ClassNotFoundException {
+    public String getNextId() {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public boolean update(PaymentDetails entity) throws SQLException, ClassNotFoundException {
+    public boolean update(PaymentDetails entity) {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public boolean remove(PaymentDetails entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("DELETE FROM paymentDetails WHERE courseId = ? AND paymentId = ?", entity.getCId(), entity.getPId());
+    public boolean remove(PaymentDetails entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+
+            session.delete(entity);  // Delete PaymentDetails entity
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public PaymentDetails searchById(PaymentDetails entity) throws SQLException, ClassNotFoundException {
+    public PaymentDetails searchById(PaymentDetails entity) {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public boolean isExist(PaymentDetails entity) throws SQLException, ClassNotFoundException {
+    public boolean isExist(PaymentDetails entity) {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public List<PaymentDetails> getAll() throws SQLException, ClassNotFoundException {
+    public List<PaymentDetails> getAll() {
+        // Not implemented as per original
         throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override
-    public ObservableList<CoursePriceTm> getPaymentDetails(String pId) throws SQLException, ClassNotFoundException {
+    public ObservableList<CoursePriceTm> getPaymentDetails(String pId) {
         ObservableList<CoursePriceTm> list = FXCollections.observableArrayList();
 
-        ResultSet resultSet = SQLUtil.execute("SELECT courseId FROM paymentDetails WHERE paymentId = ?", pId);
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Fetch courseIds for the given paymentId
+            String hql = "SELECT pd.paymentDetailsPK.courseId FROM PaymentDetails pd WHERE pd.paymentDetailsPK.paymentId = :paymentId";
+            List<String> courseIds = session.createQuery(hql, String.class)
+                    .setParameter("paymentId", pId)
+                    .getResultList();
 
-        while(resultSet.next()){
-            CoursePriceTm coursePriceTm = new CoursePriceTm(
-                    courseDAO.getCourseName(resultSet.getString("courseId")),
-                    courseDAO.getPrice(courseDAO.getCourseName(resultSet.getString("courseId")))
-            );
-            list.add(coursePriceTm);
+            // Populate the list with CoursePriceTm objects
+            for (String courseId : courseIds) {
+                String courseName = courseDAO.getCourseName(courseId);
+                double price = courseDAO.getPrice(courseName);
+                CoursePriceTm coursePriceTm = new CoursePriceTm(courseName, price);
+                list.add(coursePriceTm);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return list;
     }
 }

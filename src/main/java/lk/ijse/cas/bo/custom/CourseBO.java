@@ -31,4 +31,6 @@ public interface CourseBO extends SuperBO {
     public String getStName(String id) throws SQLException, ClassNotFoundException ;
 
     public CourseDTO searchByCourseId(String courseId) throws SQLException, ClassNotFoundException ;
+
+    public String getCourseName(String courseId) throws SQLException, ClassNotFoundException;
 }

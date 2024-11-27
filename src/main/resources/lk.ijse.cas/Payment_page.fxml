@@ -161,7 +161,7 @@
                         <TableColumn fx:id="columnUpfront" minWidth="0.0" prefWidth="203.0" text="Upfront (LKR)" />
                         <TableColumn fx:id="columnAmount" minWidth="0.0" prefWidth="203.0" text="Payment (LKR)" />
                         <TableColumn fx:id="columnPMethod" minWidth="0.0" prefWidth="143.0" text="Payment Method" />
-                        <TableColumn fx:id="columnPMethod1" minWidth="0.0" prefWidth="143.0" text="Payment Type" />
+                        <TableColumn fx:id="columnPType" minWidth="0.0" prefWidth="143.0" text="Payment Type" />
                      </columns>
                   </TableView>
                   <Group layoutX="-34.0" layoutY="77.0">

@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class CourseDetails implements Serializable {
     @EmbeddedId
     private CourseDetailsPK courseDetailsPK;
-    @Column(name = "status")
+    @Column(name = "status", length = 100)
     private String status;
 
     @ManyToOne

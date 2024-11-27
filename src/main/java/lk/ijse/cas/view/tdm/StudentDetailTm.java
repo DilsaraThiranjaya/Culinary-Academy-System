@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 
-public class StudentDetailTm {
+public class StudentDetailTm extends StudentTm {
     private String courseId;
     private String name;
     private String status;

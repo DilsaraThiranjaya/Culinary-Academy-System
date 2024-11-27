@@ -1,18 +1,19 @@
 package lk.ijse.cas.bo.custom.impl;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import lk.ijse.cas.bo.custom.PaymentBO;
 import lk.ijse.cas.dao.DAOFactory;
 import lk.ijse.cas.dao.custom.*;
-import lk.ijse.cas.db.DBConnection;
 import lk.ijse.cas.dto.PaymentDTO;
 import lk.ijse.cas.dto.StudentDTO;
+import lk.ijse.cas.embedded.PaymentDetailsPK;
 import lk.ijse.cas.entity.Payment;
 import lk.ijse.cas.entity.PaymentDetails;
 import lk.ijse.cas.entity.Student;
+import lk.ijse.cas.util.SessionFactoryConfig;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,6 @@ public class PaymentBOImpl implements PaymentBO {
     CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
     PaymentDetailsDAO paymentDetailsDAO = (PaymentDetailsDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT_DETAILS);
     CourseDetailsDAO courseDetailsDAO = (CourseDetailsDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE_DETAILS);
-
 
     @Override
     public String getStName(String id) throws SQLException, ClassNotFoundException {
@@ -36,17 +36,7 @@ public class PaymentBOImpl implements PaymentBO {
         List<PaymentDTO> paymentDTOs = new ArrayList<>();
 
         for (Payment payment : paymentList) {
-            PaymentDTO paymentDTO = new PaymentDTO(
-                    payment.getPId(),
-                    payment.getDesc(),
-                    payment.getDate(),
-                    payment.getMethod(),
-                    payment.getAmount(),
-                    payment.getSId(),
-                    payment.getCp()
-            );
-
-            paymentDTOs.add(paymentDTO);
+            paymentDTOs.add(payment.toDTO());
         }
         return paymentDTOs;
     }
@@ -68,25 +58,17 @@ public class PaymentBOImpl implements PaymentBO {
 
     @Override
     public boolean isStudentExist(String studentId) throws SQLException, ClassNotFoundException {
-        return studentDAO.isExist(new Student(studentId, null, null, null, null, null, null, null, null, null));
+        return studentDAO.isExist(new Student(studentId, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
     public boolean savePayment(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        return paymentDAO.save(new Payment(
-                paymentDTO.getPId(),
-                paymentDTO.getDesc(),
-                paymentDTO.getDate(),
-                paymentDTO.getMethod(),
-                paymentDTO.getAmount(),
-                paymentDTO.getSId(),
-                null
-        ));
+        return paymentDAO.save(paymentDTO.toEntity());
     }
 
     @Override
     public boolean savePaymentDetails(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        return paymentDetailsDAO.save(new PaymentDetails(paymentDTO.getPId(), null), paymentDTO.getCp());
+        return paymentDetailsDAO.save(new PaymentDetails(new PaymentDetailsPK(paymentDTO.getPId(), null), null, null), paymentDTO.getCp());
     }
 
     @Override
@@ -95,74 +77,61 @@ public class PaymentBOImpl implements PaymentBO {
     }
 
     @Override
-    public boolean checkOut(PaymentDTO paymentDTO) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        connection.setAutoCommit(false);
+    public boolean checkOut(PaymentDTO paymentDTO) {
+        Transaction transaction = null;
 
-        try {
-            boolean isPaymentSaved = savePayment(paymentDTO);
-            if (isPaymentSaved) {
-                boolean isPaymentDetailsSaved = savePaymentDetails(paymentDTO);
-                if (isPaymentDetailsSaved) {
-                    boolean isCourseDetailsSaved = saveCourseDetails(paymentDTO);
-                    if (isCourseDetailsSaved) {
-                        connection.commit();
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();  // Start transaction
+
+            // Save payment
+            if (savePayment(paymentDTO)) {
+                // Save payment details
+                if (savePaymentDetails(paymentDTO)) {
+                    // Save course details
+                    if (saveCourseDetails(paymentDTO)) {
+                        transaction.commit();  // Commit the transaction
                         return true;
                     }
                 }
             }
-            connection.rollback();
+
+            if (transaction != null) {
+                transaction.rollback();  // Rollback on failure
+            }
             return false;
         } catch (Exception e) {
-            connection.rollback();
-            return false;
-        } finally {
-            connection.setAutoCommit(true);
+            if (transaction != null) {
+                transaction.rollback();  // Rollback in case of an exception
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Transaction failed", e);
         }
     }
 
+
+
     @Override
     public boolean updatePayment(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        return paymentDAO.update(new Payment(
-                paymentDTO.getPId(),
-                paymentDTO.getDesc(),
-                paymentDTO.getDate(),
-                paymentDTO.getMethod(),
-                paymentDTO.getAmount(),
-                paymentDTO.getSId(),
-                null
-        ));
+        return paymentDAO.update(paymentDTO.toEntity());
     }
 
     @Override
     public boolean updatePaymentDetails(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        boolean isDeleted = searchAndDeletePaymentDetails(paymentDTO);
-        if(isDeleted){
-            boolean isSaved = savePaymentDetails(paymentDTO);
-            if(isSaved){
-                return true;
-            }
+        if (searchAndDeletePaymentDetails(paymentDTO)) {
+            return savePaymentDetails(paymentDTO);
         }
         return false;
     }
 
     @Override
     public boolean searchAndDeletePaymentDetails(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        return paymentDetailsDAO.searchAndDeletePaymentDetails(new PaymentDetails(paymentDTO.getPId(), null));
+        return paymentDetailsDAO.searchAndDeletePaymentDetails(new PaymentDetails(new PaymentDetailsPK(paymentDTO.getPId(), null), null, null));
     }
 
     @Override
     public boolean updateCourseDetails(PaymentDTO paymentDTO) throws SQLException, ClassNotFoundException {
-        boolean isDeleted = searchAndDeleteCourses(paymentDTO.getSId());
-        if(isDeleted){
-            boolean isSaved = saveCourseDetails(paymentDTO);
-            if(isSaved){
-                return true;
-            } else {
-                new Alert(Alert.AlertType.ERROR, "SCD").show();
-            }
-        } else {
-            new Alert(Alert.AlertType.ERROR, "SADC").show();
+        if (searchAndDeleteCourses(paymentDTO.getSId())) {
+            return saveCourseDetails(paymentDTO);
         }
         return false;
     }
@@ -173,62 +142,48 @@ public class PaymentBOImpl implements PaymentBO {
     }
 
     @Override
-    public boolean update(PaymentDTO paymentDTO) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        connection.setAutoCommit(false);
+    public boolean update(PaymentDTO paymentDTO) {
+        Transaction transaction = null;
 
-        try {
-            boolean isPaymentUpdated = updatePayment(paymentDTO);
-            if (isPaymentUpdated) {
-                boolean isPaymentDetailsUpdated = updatePaymentDetails(paymentDTO);
-                if (isPaymentDetailsUpdated) {
-                    boolean isCourseDetailsUpdated = updateCourseDetails(paymentDTO);
-                    if (isCourseDetailsUpdated) {
-                        connection.commit();
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();  // Start transaction
+
+            // Update payment
+            if (updatePayment(paymentDTO)) {
+                // Update payment details
+                if (updatePaymentDetails(paymentDTO)) {
+                    // Update course details
+                    if (updateCourseDetails(paymentDTO)) {
+                        transaction.commit();  // Commit the transaction
                         return true;
                     }
                 }
             }
-            connection.rollback();
+
+            if (transaction != null) {
+                transaction.rollback();  // Rollback on failure
+            }
             return false;
         } catch (Exception e) {
-            connection.rollback();
-            return false;
-        } finally {
-            connection.setAutoCommit(true);
+            if (transaction != null) {
+                transaction.rollback();  // Rollback in case of an exception
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Transaction failed", e);
         }
     }
+
 
     @Override
     public PaymentDTO searchByPaymentId(String paymentId) throws SQLException, ClassNotFoundException {
         Payment payment = paymentDAO.searchById(new Payment(paymentId, null, null, null, null, null, null));
-        return payment != null ? new PaymentDTO(
-                payment.getPId(),
-                payment.getDesc(),
-                payment.getDate(),
-                payment.getMethod(),
-                payment.getAmount(),
-                payment.getSId(),
-                payment.getCp()
-        ) : null;
+        return payment != null ? payment.toDTO() : null;
     }
 
     @Override
     public StudentDTO searchByStudentId(String studentId) throws SQLException, ClassNotFoundException {
-        Student student = studentDAO.searchById(new Student(studentId, null, null, null, null, null, null, null, null, null));
-
-        return student != null ? new StudentDTO(
-                student.getId(),
-                student.getFname(),
-                student.getLname(),
-                student.getDOb(),
-                student.getGender(),
-                student.getAdmissionDate(),
-                student.getNIC(),
-                student.getAddress(),
-                student.getCNo(),
-                student.getEmail()
-        ) : null;
+        Student student = studentDAO.searchById(new Student(studentId, null, null, null, null, null, null, null, null, null, null, null));
+        return student != null ? student.toDTO() : null;
     }
 
     @Override

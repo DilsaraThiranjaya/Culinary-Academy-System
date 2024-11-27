@@ -8,10 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import lk.ijse.cas.bo.BOFactory;
+import lk.ijse.cas.bo.custom.CourseBO;
 import lk.ijse.cas.bo.custom.StudentBO;
+import lk.ijse.cas.dto.CourseDetailsDTO;
 import lk.ijse.cas.dto.StudentDTO;
+import lk.ijse.cas.view.tdm.StudentDetailTm;
 import lk.ijse.cas.view.tdm.StudentTm;
 import lk.ijse.cas.util.Regex;
 import lk.ijse.cas.util.TextField;
@@ -26,9 +28,6 @@ import java.util.List;
 public class StudentController {
 
     @FXML
-    private TableColumn<?, ?> columnStudentId;
-
-    @FXML
     private TableColumn<?, ?> columnAddress;
 
     @FXML
@@ -38,7 +37,16 @@ public class StudentController {
     private TableColumn<?, ?> columnAge;
 
     @FXML
+    private TableColumn<?, ?> columnCId;
+
+    @FXML
+    private TableColumn<?, ?> columnCName;
+
+    @FXML
     private TableColumn<?, ?> columnCNo;
+
+    @FXML
+    private TableColumn<?, ?> columnCStatus;
 
     @FXML
     private TableColumn<?, ?> columnDob;
@@ -56,6 +64,9 @@ public class StudentController {
     private TableColumn<?, ?> columnNic;
 
     @FXML
+    private TableColumn<?, ?> columnStudentId;
+
+    @FXML
     private DatePicker dpAdmissionDate;
 
     @FXML
@@ -68,10 +79,10 @@ public class StudentController {
     private RadioButton rbMale;
 
     @FXML
-    private AnchorPane studenstPane;
+    private TableView<StudentTm> tableStudent;
 
     @FXML
-    private TableView<StudentTm> tableStudent;
+    private TableView<StudentDetailTm> tableStudentDetail;
 
     @FXML
     private JFXTextField txtAddress;
@@ -92,21 +103,30 @@ public class StudentController {
     private JFXTextField txtNic;
 
     @FXML
-    private JFXTextField txtStudentId;
+    private JFXTextField txtSearchByStudent;
+
+    @FXML
+    private JFXTextField txtSearchbyCNo;
 
     @FXML
     private JFXTextField txtSearchbySId;
 
     @FXML
-    private JFXTextField txtSearchbyCNo;
+    private JFXTextField txtStudentId;
+
 
     private ToggleGroup genderToggleGroup;
 
     private List<StudentDTO> studentList;
 
+    private List<CourseDetailsDTO> studentDetailList;
+
     private ObservableList<StudentTm> tmList;
 
+    private ObservableList<StudentDetailTm> sdtmList;
+
     StudentBO studentBO = (StudentBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.STUDENT);
+    CourseBO courseBO = (CourseBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.COURSE);
 
 
     public void initialize() {
@@ -150,6 +170,23 @@ public class StudentController {
         tableStudent.refresh();
     }
 
+    private void loadStudentDetailsTable() throws SQLException, ClassNotFoundException {
+        sdtmList = FXCollections.observableArrayList();
+
+        for (CourseDetailsDTO courseDetails : studentDetailList) {
+
+            StudentDetailTm studentTm = new StudentDetailTm(
+                    courseDetails.getCourseId(),
+                    courseBO.getCourseName(courseDetails.getCourseId()),
+                    courseDetails.getStatus()
+            );
+
+            tmList.add(studentTm);
+        }
+        tableStudentDetail.setItems(sdtmList);
+        tableStudentDetail.refresh();
+    }
+
     private void refreshTableView() {
         this.studentList = getAllStudents();
         loadStudentTable();
@@ -166,12 +203,27 @@ public class StudentController {
         columnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
         columnCNo.setCellValueFactory(new PropertyValueFactory<>("cNo"));
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        columnCId.setCellValueFactory(new PropertyValueFactory<>("courseId"));
+        columnCName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        columnCStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
     }
 
     private List<StudentDTO> getAllStudents() {
         List<StudentDTO> list = null;
         try {
             list = studentBO.getAllStudent();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
+    }
+
+    private List<CourseDetailsDTO> getAllStudentDetails(String id) {
+        List<CourseDetailsDTO> list = null;
+        try {
+            list = courseBO.getAllCourseDetails(id);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -507,6 +559,31 @@ public class StudentController {
         }
     }
 
+    public void txtSearchByStudentOnAction(ActionEvent actionEvent) {
+        String id = txtSearchByStudent.getText();
+
+        if (id != null && !id.isEmpty()){
+            if(Regex.setTextColor(TextField.ID,txtSearchByStudent)){
+                try {
+                    if(studentBO.isStudentExist(id)){
+                        this.studentDetailList = getAllStudentDetails(id);
+                        loadStudentDetailsTable();
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "Course not found!").show();
+                        this.studentDetailList = getAllStudentDetails(id);
+                        loadStudentDetailsTable();
+                    }
+                } catch (SQLException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Incorrect value in fields!").show();
+            }
+        } else {
+            new Alert(Alert.AlertType.WARNING, "Enter a Course Id!").show();
+        }
+    }
+
     public boolean isValid(){
         if (!Regex.setTextColor(TextField.ID,txtStudentId)) return false;
         if (!Regex.setTextColor(TextField.NAME,txtFName)) return false;
@@ -562,10 +639,8 @@ public class StudentController {
         Regex.setTextColor(TextField.ID,txtSearchbySId);
     }
 
-    public void txtSearchByStudentOnAction(ActionEvent actionEvent) {
-    }
-
-    public void txtSearchByStudentOnKeyRelesed(KeyEvent keyEvent) {
-
+    @FXML
+    void txtSearchByStudentOnKeyRelesed(KeyEvent event) {
+        Regex.setTextColor(TextField.ID,txtSearchByStudent);
     }
 }

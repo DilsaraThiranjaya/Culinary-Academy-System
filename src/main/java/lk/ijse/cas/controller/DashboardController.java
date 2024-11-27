@@ -1,13 +1,8 @@
 package lk.ijse.cas.controller;
 
 import com.jfoenix.controls.JFXButton;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -19,10 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.DashboardBO;
 import lk.ijse.cas.dto.UserDTO;
@@ -30,27 +23,23 @@ import lk.ijse.cas.util.WindowController;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 
 public class DashboardController {
 
     @FXML
-    private JFXButton btnSettings;
+    private BorderPane borderPane;
 
     @FXML
-    private HBox iconSettings;
+    private JFXButton btnCourses;
 
     @FXML
     private JFXButton btnPayments;
 
     @FXML
-    private JFXButton btnStudents;
+    private JFXButton btnSettings;
 
     @FXML
-    private JFXButton btnCourses;
+    private JFXButton btnStudents;
 
     @FXML
     private HBox iconCourses;
@@ -59,34 +48,22 @@ public class DashboardController {
     private HBox iconPayments;
 
     @FXML
+    private HBox iconSettings;
+
+    @FXML
     private HBox iconStudents;
-
-    @FXML
-    private AnchorPane rootNode;
-
-    @FXML
-    private AnchorPane sidebar;
-
-    @FXML
-    private Label lblUiUsername;
 
     @FXML
     private ImageView ivLogoutIcon;
 
     @FXML
-    private ImageView ivRegistorIcon;
-
-    @FXML
     private Label lblLogout;
 
     @FXML
-    private Label lblRegistor;
+    private Label lblUiUsername;
 
     @FXML
-    private BorderPane borderPane;
-
-    @FXML
-    private AnchorPane taskBarPane;
+    private AnchorPane rootNode;
 
     private HBox selectedIcon;
 
@@ -152,7 +129,6 @@ public class DashboardController {
         addHoverEffect(btnPayments,iconPayments);
         addHoverEffect(btnCourses,iconCourses);
         addHoverEffect(btnSettings,iconSettings);
-        addHoverEffect(lblRegistor,ivRegistorIcon, "/lk.ijse.cas/asserts/icons/hover/Registor_icon_hover.png", "/lk.ijse.cas/asserts/icons/Registor_icon.png");
         addHoverEffect(lblLogout,ivLogoutIcon, "/lk.ijse.cas/asserts/icons/hover/Logout_icon_hover.png", "/lk.ijse.cas/asserts/icons/Logout_icon.png");
     }
 
@@ -203,13 +179,8 @@ public class DashboardController {
     }
 
     private void setDefaultSelectedButtonStyle(String role) {
-        if(role != null && role.equals("Instructor")){
-            selectedButton = btnVehicles; // Set the initial selected button
-            selectedIcon = iconVehicles;
-            } else {
-            selectedButton = btnEmployees; // Set the initial selected button
-            selectedIcon = iconEmployees;
-        }
+        selectedButton = btnStudents; // Set the initial selected button
+        selectedIcon = iconStudents;
         selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
         selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
     }
@@ -286,26 +257,6 @@ public class DashboardController {
         stage.setOnShown( e -> currentStage.close());
 
         stage.show();
-    }
-
-    @FXML
-    void btnRegistorOnClicked(MouseEvent event) {
-
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(this.getClass().getResource("/lk.ijse.cas/Register_page.fxml"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Scene scene = new Scene(root);
-
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Registor Form");
-        stage.centerOnScreen();
-        stage.initModality(Modality.APPLICATION_MODAL); // Set as modal
-
-        stage.showAndWait();
     }
 
     @FXML

@@ -4,104 +4,186 @@ import javafx.collections.ObservableList;
 import lk.ijse.cas.dao.DAOFactory;
 import lk.ijse.cas.dao.custom.CourseDAO;
 import lk.ijse.cas.dao.custom.CourseDetailsDAO;
+import lk.ijse.cas.embedded.CourseDetailsPK;
 import lk.ijse.cas.entity.CourseDetails;
+import lk.ijse.cas.util.SessionFactoryConfig;
 import lk.ijse.cas.view.tdm.CoursePriceTm;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDetailsDAOImpl implements CourseDetailsDAO {
 
-    @Override
-    public boolean save(String sId, ObservableList<CoursePriceTm> cp) throws SQLException, ClassNotFoundException {
-        boolean isSaved = false;
+    private CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
 
-        if(cp != null){
-            for(CoursePriceTm cpTm : cp){
-                String studentId = sId;
-                if(studentId != null){
-                    CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
-                    isSaved = SQLUtil.execute("INSERT INTO courseDetails VALUES (?, ?, NULL)", sId, courseDAO.getCourseID(cpTm.getCourse()));
+    @Override
+    public boolean save(String sId, ObservableList<CoursePriceTm> cp) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+
+            if (cp != null) {
+                for (CoursePriceTm cpTm : cp) {
+                    String studentId = sId;
+                    if (studentId != null) {
+                        // Create new CourseDetails object
+                        CourseDetails courseDetails = new CourseDetails();
+                        courseDetails.setCourseDetailsPK(new CourseDetailsPK(studentId, courseDAO.getCourseID(cpTm.getCourse())));
+                        courseDetails.setStatus(null);  // Set default value for status
+                        courseDetails.setStudent(null);
+                        courseDetails.setCourse(null);
+
+                        session.save(courseDetails);  // Save CourseDetails entity
+                    }
                 }
             }
-            return isSaved;
+
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
         }
-
-        return false;
     }
 
     @Override
-    public boolean searchAndDeleteCourses(String sId) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT courseId FROM courseDetails WHERE studentId = ?", sId);
+    public boolean searchAndDeleteCourses(String sId) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
 
-        boolean isDeleted = false;
+            // Fetch all courseDetails for the given studentId
+            String hql = "FROM CourseDetails cd WHERE cd.courseDetailsPK.studentId = :studentId";
+            Query<CourseDetails> query = session.createQuery(hql, CourseDetails.class);
+            query.setParameter("studentId", sId);
+            List<CourseDetails> courseDetailsList = query.list();
 
-        while(resultSet.next()){
-            CourseDetails courseDetails  = new CourseDetails(sId, resultSet.getString("courseId"), null);
-            remove(courseDetails);
+            boolean isDeleted = false;
 
-            isDeleted = true;
+            // Loop through the list and delete CourseDetails
+            for (CourseDetails courseDetails : courseDetailsList) {
+                session.delete(courseDetails);  // Delete CourseDetails entity
+                isDeleted = true;
+            }
+
+            transaction.commit();
+            return isDeleted;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
         }
-        return isDeleted;
     }
 
     @Override
-    public boolean remove(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("DELETE FROM courseDetails WHERE courseId = ? AND studentId = ?", entity.getCId(), entity.getSId());
-    }
+    public boolean remove(CourseDetails entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
 
-    @Override
-    public CourseDetails searchById(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean isExist(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT * FROM courseDetails WHERE courseId = ? AND studentId = ?", entity.getCId(), entity.getSId());
-
-        return rst.next();
-    }
-
-    @Override
-    public List<CourseDetails> getAll() throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean save(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean isAvailable(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public String getNextId() throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean update(CourseDetails entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE courseDetails SET status=? WHERE courseId=? AND studentId=?", entity.getStatus(), entity.getCId(), entity.getSId());
-    }
-
-    @Override
-    public List<CourseDetails> getAllCourseDetails(String id) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT * FROM courseDetails WHERE courseId = ?", id);
-
-        List<CourseDetails> list = new ArrayList<>();
-
-        while (resultSet.next()) {
-            String studentId = resultSet.getString(1);
-            String status = resultSet.getString(3);
-
-            CourseDetails cd = new CourseDetails(id, studentId, status);
-            list.add(cd);
+            session.delete(entity);  // Delete CourseDetails entity
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
         }
-        return list;
+    }
+
+    @Override
+    public CourseDetails searchById(CourseDetails entity) {
+        // Not implemented as per original
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean isExist(CourseDetails entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Check if the CourseDetails exists for the given studentId and courseId
+            String hql = "FROM CourseDetails cd WHERE cd.courseDetailsPK.studentId = :studentId AND cd.courseDetailsPK.programId = :programId";
+            Query<CourseDetails> query = session.createQuery(hql, CourseDetails.class);
+            query.setParameter("studentId", entity.getCourseDetailsPK().getStudentId());
+            query.setParameter("programId", entity.getCourseDetailsPK().getProgramId());
+
+            return query.uniqueResult() != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<CourseDetails> getAll() {
+        // Not implemented as per original
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean save(CourseDetails entity) {
+        // Not implemented as per original
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean isAvailable(CourseDetails entity) {
+        // Not implemented as per original
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public String getNextId() {
+        // Not implemented as per original
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean update(CourseDetails entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+
+            // Update status in the courseDetails table
+            String hql = "UPDATE CourseDetails cd SET cd.status = :status WHERE cd.courseDetailsPK.studentId = :studentId AND cd.courseDetailsPK.programId = :programId";
+            Query query = session.createQuery(hql);
+            query.setParameter("status", entity.getStatus());
+            query.setParameter("studentId", entity.getCourseDetailsPK().getStudentId());
+            query.setParameter("programId", entity.getCourseDetailsPK().getProgramId());
+
+            int result = query.executeUpdate();
+            transaction.commit();
+            return result > 0;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<CourseDetails> getAllCourseDetails(String id) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Fetch courseDetails for the given programId
+            String hql = "FROM CourseDetails cd WHERE cd.courseDetailsPK.programId = :programId";
+            Query<CourseDetails> query = session.createQuery(hql, CourseDetails.class);
+            query.setParameter("programId", id);  // Bind the courseId parameter to the query
+
+            return query.list();  // Execute the query and fetch the results
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();  // Return an empty list if an error occurs
+        }
     }
 }

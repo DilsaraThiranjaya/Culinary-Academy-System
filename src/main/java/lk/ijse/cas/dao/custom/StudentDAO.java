@@ -10,6 +10,4 @@ public interface StudentDAO extends CrudDAO<Student> {
     Student searchByCNo(String CNo) throws SQLException, ClassNotFoundException;
 
     String getStName(String id) throws SQLException, ClassNotFoundException;
-
-    ObservableList<String> getAllStudents() throws SQLException, ClassNotFoundException;
 }

@@ -1,11 +1,11 @@
 package lk.ijse.cas.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
+import javafx.collections.ObservableList;
 import lk.ijse.cas.entity.Payment;
 import lk.ijse.cas.entity.Student;
+import lk.ijse.cas.view.tdm.CoursePriceTm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,12 +15,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class PaymentDTO implements Serializable {
     private String pId;
-    private Date date;
+    private String date;
     private String method;
     private String type;
-    private BigDecimal upfrontP;
-    private BigDecimal totalP;
+    private String upfrontP;
+    private String totalP;
     private String sId;
+    private ObservableList<CoursePriceTm> cp;
 
     public Payment toEntity() {
         Payment paymentEntity = new Payment();
@@ -30,6 +31,7 @@ public class PaymentDTO implements Serializable {
         paymentEntity.setType(this.type);
         paymentEntity.setUpfrontPayment(this.upfrontP);
         paymentEntity.setTotalPayment(this.totalP);
+        paymentEntity.setStudent(null);
 
         Student student = new Student();
         student.setStudentId(this.sId);

@@ -15,9 +15,9 @@ public class StudentDTO implements Serializable {
     private String id;
     private String fname;
     private String lname;
-    private Date dOb;
+    private String dOb;
     private String gender;
-    private Date admissionDate;
+    private String admissionDate;
     private String nIC;
     private String address;
     private String cNo;
@@ -35,6 +35,8 @@ public class StudentDTO implements Serializable {
         studentEntity.setAddress(this.address);
         studentEntity.setContactNo(this.cNo);
         studentEntity.setEmail(this.email);
+        studentEntity.setPayment(null);
+        studentEntity.setCourseDetails(null);
         return studentEntity;
     }
 }

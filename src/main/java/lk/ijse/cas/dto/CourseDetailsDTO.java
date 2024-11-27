@@ -2,6 +2,7 @@ package lk.ijse.cas.dto;
 
 import java.io.Serializable;
 
+import lk.ijse.cas.embedded.CourseDetailsPK;
 import lk.ijse.cas.entity.Course;
 import lk.ijse.cas.entity.CourseDetails;
 import lk.ijse.cas.entity.Student;
@@ -20,14 +21,9 @@ public class CourseDetailsDTO implements Serializable {
     public CourseDetails toEntity() {
         CourseDetails courseDetailsEntity = new CourseDetails();
         courseDetailsEntity.setStatus(this.status);
-
-        Student student = new Student();
-        student.setStudentId(this.studentId);
-        courseDetailsEntity.setStudent(student);
-
-        Course course = new Course();
-        course.setProgramId(this.courseId);
-        courseDetailsEntity.setCourse(course);
+        courseDetailsEntity.setCourseDetailsPK(new CourseDetailsPK(this.studentId, this.courseId));
+        courseDetailsEntity.setCourse(null);
+        courseDetailsEntity.setStudent(null);
 
         return courseDetailsEntity;
     }

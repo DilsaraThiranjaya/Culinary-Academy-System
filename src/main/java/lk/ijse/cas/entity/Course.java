@@ -18,16 +18,16 @@ import java.util.List;
 @Table(name = "programs")
 public class Course implements Serializable {
     @Id
-    @Column(name = "programId")
+    @Column(name = "programId", length = 100)
     private String programId;
-    @Column(name = "name")
+    @Column(name = "name", length = 100)
     private String name;
-    @Column(name = "description")
+    @Column(name = "description", length = 100)
     private String description;
-    @Column(name = "duration")
+    @Column(name = "duration", length = 100)
     private String duration;
-    @Column(name = "fee")
-    private BigDecimal fee;
+    @Column(name = "fee", length = 100)
+    private String fee;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CourseDetails> courseDetails = new ArrayList<>();

@@ -18,33 +18,31 @@ import java.util.List;
 @Table(name = "students")
 public class Student implements Serializable {
     @Id
-    @Column(name = "studentId")
+    @Column(name = "studentId", length = 100)
     private String studentId;
-    @Column(name = "firstName")
+    @Column(name = "firstName", length = 100)
     private String firstName;
-    @Column(name = "lastName")
+    @Column(name = "lastName", length = 100)
     private String lastName;
-    @Column(name = "dateOfBirth")
-    private Date dateOfBirth;
-    @Column(name = "gender")
+    @Column(name = "dateOfBirth", length = 100)
+    private String dateOfBirth;
+    @Column(name = "gender", length = 100)
     @Enumerated(EnumType.STRING)
     private String gender;
-    @Column(name = "admissionDate")
-    private Date admissionDate;
-    @Column(name = "NIC")
+    @Column(name = "admissionDate", length = 100)
+    private String admissionDate;
+    @Column(name = "NIC", length = 100)
     private String NIC;
-    @Column(name = "address")
+    @Column(name = "address", length = 100)
     private String address;
-    @Column(name = "contactNo")
+    @Column(name = "contactNo", length = 100)
     private String contactNo;
-    @Column(name = "email")
+    @Column(name = "email", length = 100)
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "student")
-    private List<Payment> payment
-            = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "student")
+    private List<Payment> payment = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CourseDetails> courseDetails = new ArrayList<>();

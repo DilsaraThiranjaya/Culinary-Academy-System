@@ -15,15 +15,15 @@ import java.io.Serializable;
 @Table(name = "users")
 public class User implements Serializable {
     @Id
-    @Column(name = "userId")
+    @Column(name = "userId", length = 100)
     private String userId;
-    @Column(name = "userName")
+    @Column(name = "userName", length = 100)
     private String userName;
-    @Column(name = "position")
+    @Column(name = "position", length = 100)
     private String position;
-    @Column(name = "password")
+    @Column(name = "password", length = 100)
     private String password;
-    @Column(name = "email")
+    @Column(name = "email", length = 100)
     private String email;
 
     public UserDTO toDTO() {

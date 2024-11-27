@@ -17,7 +17,7 @@ public class CourseDTO implements Serializable {
     private String name;
     private String description;
     private String duration;
-    private BigDecimal price;
+    private String price;
 
     public Course toEntity() {
         Course courseEntity = new Course();
@@ -26,6 +26,7 @@ public class CourseDTO implements Serializable {
         courseEntity.setDescription(this.description);
         courseEntity.setDuration(this.duration);
         courseEntity.setFee(this.price);
+        courseEntity.setCourseDetails(null);
         return courseEntity;
     }
 }

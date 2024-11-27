@@ -18,20 +18,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "payments")
 public class Payment implements Serializable {
     @Id
-    @Column(name = "paymentId")
+    @Column(name = "paymentId", length = 100)
     private String paymentId;
-    @Column(name = "date")
-    private Date date;
-    @Column(name = "method")
+    @Column(name = "date", length = 100)
+    private String date;
+    @Column(name = "method", length = 100)
     private String method;
-    @Column(name = "type")
+    @Column(name = "type", length = 100)
     private String type;
-    @Column(name = "upfrontPayment")
-    private BigDecimal upfrontPayment;
-    @Column(name = "totalPayment")
-    private BigDecimal totalPayment;
+    @Column(name = "upfrontPayment", length = 100)
+    private String upfrontPayment;
+    @Column(name = "totalPayment", length = 100)
+    private String  totalPayment;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "studentId")
     private Student student;
 
@@ -50,6 +50,7 @@ public class Payment implements Serializable {
         paymentDTO.setUpfrontP(this.upfrontPayment);
         paymentDTO.setTotalP(this.totalPayment);
         paymentDTO.setSId(this.student.getStudentId());
+        paymentDTO.setCp(null);
         return paymentDTO;
     }
 }

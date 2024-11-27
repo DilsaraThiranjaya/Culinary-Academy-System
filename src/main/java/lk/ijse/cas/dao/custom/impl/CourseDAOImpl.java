@@ -4,6 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lk.ijse.cas.dao.custom.CourseDAO;
 import lk.ijse.cas.entity.Course;
+import lk.ijse.cas.util.SessionFactoryConfig;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,146 +17,166 @@ import java.util.List;
 public class CourseDAOImpl implements CourseDAO {
 
     @Override
-    public boolean isAvailable(Course entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT courseId FROM course WHERE courseId = ?", entity.getId());
-
-        return !rst.next();
-    }
-
-    @Override
-    public boolean save(Course entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO course VALUES (?, ?, ?, ?, ?)",
-                entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getDuration(),
-                entity.getPrice()
-                );
-    }
-
-    @Override
-    public String getNextId() throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT courseId FROM course ORDER BY courseId DESC LIMIT 1");
-
-        if (resultSet.next()) {
-            String lastId = resultSet.getString(1);
-            String prefix = lastId.substring(0, 1); // Assuming format is "CXXX"
-            int numericPart = Integer.parseInt(lastId.substring(1)); // Extract numeric part
-            int nextNumericPart = numericPart + 1;
-            String nextId = prefix + String.format("%03d", nextNumericPart); // Format back to "CXXX" format
-            return nextId;
+    public boolean isAvailable(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT 1 FROM Course c WHERE c.programId = :programId";
+            Query<Integer> query = session.createQuery(hql, Integer.class);
+            query.setParameter("programId", entity.getProgramId());
+            return query.uniqueResult() == null;  // If no result, course is available
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        return "C001";
     }
 
     @Override
-    public boolean isExist(Course entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT courseId FROM course WHERE courseId = ?", entity.getId());
-
-        return rst.next();
-    }
-
-    @Override
-    public boolean update(Course entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE course SET name=?, description=?, duration=?, price=? WHERE courseId=?",
-                entity.getName(),
-                entity.getDescription(),
-                entity.getDuration(),
-                entity.getPrice(),
-                entity.getId()
-                );
-    }
-
-    @Override
-    public boolean remove(Course entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("DELETE FROM course WHERE courseId = ?", entity.getId());
-    }
-
-    @Override
-    public Course searchById(Course entity) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT * FROM course WHERE courseId = ?", entity.getId());
-
-        Course course = null;
-
-        if (resultSet.next()) {
-            String courseId = resultSet.getString(1);
-            String name = resultSet.getString(2);
-            String description = resultSet.getString(3);
-            String duration = resultSet.getString(4);
-            String price = resultSet.getString(5);
-
-            course = new Course(courseId, name, description, duration, price);
+    public boolean save(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.save(entity);  // Save the entity
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return course;
     }
 
     @Override
-    public List<Course> getAll() throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT * FROM course");
+    public String getNextId() {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT c.programId FROM Course c ORDER BY c.programId DESC";
+            Query<String> query = session.createQuery(hql, String.class);
+            List<String> ids = query.setMaxResults(1).list();
 
-        List<Course> list = new ArrayList<>();
-
-        while (resultSet.next()) {
-            String courseId = resultSet.getString(1);
-            String name = resultSet.getString(2);
-            String description = resultSet.getString(3);
-            String duration = resultSet.getString(4);
-            String price = resultSet.getString(5);
-
-            Course course = new Course(courseId, name, description, duration, price);
-            list.add(course);
+            if (!ids.isEmpty()) {
+                String lastId = ids.get(0);
+                String prefix = lastId.substring(0, 1); // Assuming format "CXXX"
+                int numericPart = Integer.parseInt(lastId.substring(1));
+                String nextId = prefix + String.format("%03d", numericPart + 1);
+                return nextId;
+            }
+            return "C001";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "C001";  // Default ID in case of error
         }
-        return list;
     }
 
     @Override
-    public ObservableList<String> getCourses() throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT name FROM course");
-
-        ObservableList<String> items = FXCollections.observableArrayList();
-
-        while (resultSet.next()) {
-            items.add(resultSet.getString("name"));
+    public boolean isExist(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT 1 FROM Course c WHERE c.programId = :programId";
+            Query<Integer> query = session.createQuery(hql, Integer.class);
+            query.setParameter("programId", entity.getProgramId());
+            return query.uniqueResult() != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return items;
+    }
+
+    @Override
+    public boolean update(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.update(entity);  // Update the entity
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean remove(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.delete(entity);  // Delete the entity
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Course searchById(Course entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            return session.get(Course.class, entity.getProgramId());  // Fetch by ID
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Course> getAll() {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "FROM Course";
+            Query<Course> query = session.createQuery(hql, Course.class);
+            return query.list();  // Return all courses
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public ObservableList<String> getCourses() {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT c.name FROM Course c";
+            Query<String> query = session.createQuery(hql, String.class);
+            return FXCollections.observableArrayList(query.list());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.observableArrayList();
+        }
     }
 
     @Override
     public String getCourseName(String courseId) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT name FROM course WHERE courseId = ?", courseId);
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT c.name FROM Course c WHERE c.programId = :courseId";  // HQL query to fetch course name
 
-        String name = null;
+            Query<String> query = session.createQuery(hql, String.class);
+            query.setParameter("courseId", courseId);  // Set the courseId parameter in the query
 
-        if (resultSet.next()) {
-            name = resultSet.getString("name");
+            String name = query.uniqueResult();  // Fetch the unique result (course name)
 
-            return name;
+            return name;  // Return the course name or null if not found
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;  // Return null in case of an error
         }
-        return name;
     }
 
     @Override
-    public String getCourseID(String courseName) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT courseID FROM course WHERE name = ?", courseName);
-
-        if(resultSet.next()){
-            return resultSet.getString("courseId");
+    public String getCourseID(String courseName) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT c.programId FROM Course c WHERE c.name = :courseName";
+            Query<String> query = session.createQuery(hql, String.class);
+            query.setParameter("courseName", courseName);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
-    public double getPrice(String selectedCourse) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT price FROM course WHERE name = ?", selectedCourse);
-
-        double price = 0;
-
-        if (resultSet.next()) {
-            price = resultSet.getDouble("price");
-
-            return price;
+    public double getPrice(String selectedCourse) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "SELECT c.fee FROM Course c WHERE c.name = :courseName";
+            Query<Double> query = session.createQuery(hql, Double.class);
+            query.setParameter("courseName", selectedCourse);
+            Double price = query.uniqueResult();
+            return price != null ? price : 0.0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
         }
-        return price;
     }
 }

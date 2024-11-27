@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.CourseBO;
 import lk.ijse.cas.dto.CourseDTO;
@@ -50,9 +49,6 @@ public class CourseController {
 
     @FXML
     private TableColumn<?, ?> columnSStatus;
-
-    @FXML
-    private AnchorPane coursesPane;
 
     @FXML
     private TableView<CourseTm> tableCourse;
@@ -476,5 +472,4 @@ public class CourseController {
     void txtSearchByCourseOnKeyRelesed(KeyEvent event) {
         Regex.setTextColor(TextField.ID,txtSearchByCourse);
     }
-
 }

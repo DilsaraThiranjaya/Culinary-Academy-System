@@ -19,20 +19,13 @@ public class CourseBOImpl implements CourseBO {
     CourseDetailsDAO courseDetailsDAO = (CourseDetailsDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE_DETAILS);
     StudentDAO studentDAO = (StudentDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.STUDENT);
 
-
     @Override
     public List<CourseDetailsDTO> getAllCourseDetails(String id) throws SQLException, ClassNotFoundException {
         List<CourseDetails> courseDetailsList = courseDetailsDAO.getAllCourseDetails(id);
         List<CourseDetailsDTO> courseDetailsDTOs = new ArrayList<>();
 
         for (CourseDetails courseDetails : courseDetailsList) {
-            CourseDetailsDTO courseDetailsDTO = new CourseDetailsDTO(
-                    courseDetails.getCId(),
-                    courseDetails.getSId(),
-                    courseDetails.getStatus()
-            );
-
-            courseDetailsDTOs.add(courseDetailsDTO);
+            courseDetailsDTOs.add(courseDetails.toDTO());
         }
         return courseDetailsDTOs;
     }
@@ -43,15 +36,7 @@ public class CourseBOImpl implements CourseBO {
         List<CourseDTO> courseDTOs = new ArrayList<>();
 
         for (Course course : courseList) {
-            CourseDTO courseDTO = new CourseDTO(
-                    course.getId(),
-                    course.getName(),
-                    course.getDescription(),
-                    course.getDuration(),
-                    course.getPrice()
-            );
-
-            courseDTOs.add(courseDTO);
+            courseDTOs.add(course.toDTO());
         }
         return courseDTOs;
     }
@@ -63,73 +48,52 @@ public class CourseBOImpl implements CourseBO {
 
     @Override
     public boolean isCourseExist(String courseId) throws SQLException, ClassNotFoundException {
-        return courseDAO.isExist(new Course(courseId, null, null, null, null));
+        return courseDAO.isExist(new Course(courseId, null, null, null, null, null));
     }
 
     @Override
     public boolean removeCourse(String courseId) throws SQLException, ClassNotFoundException {
-        return courseDAO.remove(new Course(courseId, null, null, null, null));
+        return courseDAO.remove(new Course(courseId, null, null, null, null, null));
     }
 
     @Override
     public boolean isCourseAvailable(String courseId) throws SQLException, ClassNotFoundException {
-        return courseDAO.isAvailable(new Course(courseId, null, null, null, null));
+        return courseDAO.isAvailable(new Course(courseId, null, null, null, null, null));
     }
 
     @Override
     public boolean saveCourse(CourseDTO courseDTO) throws SQLException, ClassNotFoundException {
-        return courseDAO.save(new Course(
-                courseDTO.getId(),
-                courseDTO.getName(),
-                courseDTO.getDescription(),
-                courseDTO.getDuration(),
-                courseDTO.getPrice()
-        ));
-    }
-
-    @Override
-    public boolean isCourseDetailExist(CourseDetailsDTO courseDetailsDTO) throws SQLException, ClassNotFoundException {
-        return courseDetailsDAO.isExist(new CourseDetails(
-                courseDetailsDTO.getStudentId(),
-                courseDetailsDTO.getCourseId(),
-                courseDetailsDTO.getStatus()
-        ));
-    }
-
-    @Override
-    public boolean updateCourseStatus(CourseDetailsDTO courseDetailsDTO) throws SQLException, ClassNotFoundException {
-        return courseDetailsDAO.update(new CourseDetails(
-                courseDetailsDTO.getStudentId(),
-                courseDetailsDTO.getCourseId(),
-                courseDetailsDTO.getStatus()
-        ));
+        return courseDAO.save(courseDTO.toEntity());
     }
 
     @Override
     public boolean updateCourse(CourseDTO courseDTO) throws SQLException, ClassNotFoundException {
-        return courseDAO.update(new Course(
-                courseDTO.getId(),
-                courseDTO.getName(),
-                courseDTO.getDescription(),
-                courseDTO.getDuration(),
-                courseDTO.getPrice()
-        ));
+        return courseDAO.update(courseDTO.toEntity());
+    }
+
+    @Override
+    public CourseDTO searchByCourseId(String courseId) throws SQLException, ClassNotFoundException {
+        Course course = courseDAO.searchById(new Course(courseId, null, null, null, null, null));
+        return course != null ? course.toDTO() : null;
+    }
+
+    @Override
+    public String getCourseName(String courseId) throws SQLException, ClassNotFoundException {
+        return courseDAO.getCourseName(courseId);
+    }
+
+    @Override
+    public boolean isCourseDetailExist(CourseDetailsDTO courseDetailsDTO) throws SQLException, ClassNotFoundException {
+        return courseDetailsDAO.isExist(courseDetailsDTO.toEntity());
+    }
+
+    @Override
+    public boolean updateCourseStatus(CourseDetailsDTO courseDetailsDTO) throws SQLException, ClassNotFoundException {
+        return courseDetailsDAO.update(courseDetailsDTO.toEntity());
     }
 
     @Override
     public String getStName(String id) throws SQLException, ClassNotFoundException {
         return studentDAO.getStName(id);
-    }
-
-    @Override
-    public CourseDTO searchByCourseId(String courseId) throws SQLException, ClassNotFoundException {
-        Course course = courseDAO.searchById(new Course(courseId, null, null, null, null));
-        return course != null ? new CourseDTO(
-                course.getId(),
-                course.getName(),
-                course.getDescription(),
-                course.getDuration(),
-                course.getPrice()
-        ) : null;
     }
 }

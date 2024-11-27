@@ -11,8 +11,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.cas.bo.BOFactory;
+import lk.ijse.cas.bo.custom.CourseBO;
 import lk.ijse.cas.bo.custom.PaymentBO;
-import lk.ijse.cas.db.DBConnection;
+import lk.ijse.cas.dto.CourseDTO;
 import lk.ijse.cas.dto.PaymentDTO;
 import lk.ijse.cas.dto.StudentDTO;
 import lk.ijse.cas.view.tdm.CoursePriceTm;
@@ -22,20 +23,18 @@ import lk.ijse.cas.util.Regex;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PaymentController {
-
-    @FXML
-    private JFXComboBox<String> cmbPMethod;
 
     @FXML
     private JFXComboBox<String> cmbCourses;
 
     @FXML
-    private JFXTextField txtStudentId;
+    private JFXComboBox<String> cmbPMethod;
+
+    @FXML
+    private JFXComboBox<String> cmbPType;
 
     @FXML
     private TableColumn<?, ?> columnAmount;
@@ -50,13 +49,13 @@ public class PaymentController {
     private TableColumn<?, ?> columnDate;
 
     @FXML
-    private TableColumn<?, ?> columnDescription;
-
-    @FXML
     private TableColumn<?, ?> columnPId;
 
     @FXML
     private TableColumn<?, ?> columnPMethod;
+
+    @FXML
+    private TableColumn<?, ?> columnPType;
 
     @FXML
     private TableColumn<?, ?> columnPrice;
@@ -68,7 +67,13 @@ public class PaymentController {
     private TableColumn<?, ?> columnSName;
 
     @FXML
+    private TableColumn<?, ?> columnUpfront;
+
+    @FXML
     private Label lblDate;
+
+    @FXML
+    private Label lblDue;
 
     @FXML
     private Label lblPaymentId;
@@ -86,10 +91,13 @@ public class PaymentController {
     private TableView<PaymentTm> tablePayment;
 
     @FXML
-    private JFXTextField txtDescription;
+    private JFXTextField txtSearch;
 
     @FXML
-    private JFXTextField txtSearch;
+    private JFXTextField txtStudentId;
+
+    @FXML
+    private JFXTextField txtUAmount;
 
     private List<PaymentDTO> paymentList;
 
@@ -100,6 +108,7 @@ public class PaymentController {
     private ObservableList<CoursePriceTm> coursesData;
 
     PaymentBO paymentBO = (PaymentBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PAYMENT);
+    CourseBO courseBO = (CourseBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.COURSE);
 
 
 
@@ -129,15 +138,22 @@ public class PaymentController {
         return sb.toString();
     }
 
-    private void loadPaymentTable() {
+    private void loadPaymentTable(){
         ptmList = FXCollections.observableArrayList();
 
         for (PaymentDTO payment : paymentList) {
 
             ObservableList<String> courseList = FXCollections.observableArrayList();
 
-            for (CoursePriceTm coursePriceTm : payment.getCp()){
-                courseList.add(coursePriceTm.getCourse());
+            try {
+                for (CourseDTO courseDTO : courseBO.getAllCourses()){
+                    CoursePriceTm coursePriceTm = new CoursePriceTm(courseDTO.getName(), Double.parseDouble(courseDTO.getPrice()));
+                    courseList.add(coursePriceTm.getCourse());
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
 
             PaymentTm paymentTm = null;
@@ -146,12 +162,13 @@ public class PaymentController {
                 paymentTm  = new PaymentTm(
                         payment.getPId(),
                         payment.getDate(),
-                        payment.getDesc(),
                         payment.getSId(),
                         paymentBO.getStName(payment.getSId()),
                         convertListToString(courseList),
-                        payment.getAmount(),
-                        payment.getMethod()
+                        payment.getUpfrontP(),
+                        payment.getTotalP(),
+                        payment.getMethod(),
+                        payment.getType()
                 );
             } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -165,13 +182,14 @@ public class PaymentController {
 
     private void setCellValueFactory() {
         columnPId.setCellValueFactory(new PropertyValueFactory<>("pId"));
-        columnDescription.setCellValueFactory(new PropertyValueFactory<>("desc"));
         columnDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         columnPMethod.setCellValueFactory(new PropertyValueFactory<>("pMethod"));
-        columnAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        columnAmount.setCellValueFactory(new PropertyValueFactory<>("totalP"));
         columnSId.setCellValueFactory(new PropertyValueFactory<>("sId"));
         columnSName.setCellValueFactory(new PropertyValueFactory<>("sName"));
         columnCourses.setCellValueFactory(new PropertyValueFactory<>("courses"));
+        columnUpfront.setCellValueFactory(new PropertyValueFactory<>("upfrontP"));
+        columnPType.setCellValueFactory(new PropertyValueFactory<>("pType"));
     }
 
     private List<PaymentDTO> getAllPayments() {
@@ -204,6 +222,7 @@ public class PaymentController {
 
     private void initializeCmbAndCb() {
         cmbPMethod.getItems().addAll("Cash", "Card");
+        cmbPType.getItems().addAll("Upfront", "Full");
 
         try {
             cmbCourses.setItems(paymentBO.getCourses());
@@ -285,11 +304,12 @@ public class PaymentController {
         initializeDate();
         initializeTotal();
 
-        txtDescription.setText("");
         txtStudentId.setText("");
+        txtUAmount.setText("");
 
         cmbCourses.setValue(null);
         cmbPMethod.setValue(null);
+        cmbPType.setValue(null);
 
         coursesData.clear();
         tableCourses.setItems(coursesData);
@@ -298,9 +318,10 @@ public class PaymentController {
     @FXML
     void btnCheckOutOnAction(ActionEvent event) {
         String paymnetId = lblPaymentId.getText();
-        String desc = txtDescription.getText();
         String pMethod = cmbPMethod.getValue();
+        String pType = cmbPType.getValue();
         String studentId = txtStudentId.getText();
+        String uAmount = txtUAmount.getText();
         String amount = lblTotal.getText();
         String date = null;
 
@@ -313,9 +334,9 @@ public class PaymentController {
             // Now you can use the sqlDate string as needed
         }
 
-        PaymentDTO payment = new PaymentDTO(paymnetId, desc, date, pMethod, amount, studentId, coursesData);
+        PaymentDTO payment = new PaymentDTO(paymnetId, date, pMethod, pType, uAmount, amount, studentId, coursesData);
 
-        if(paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && studentId != null && !studentId.isEmpty()
+        if(paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && pType != null && !pType.isEmpty() && studentId != null && !studentId.isEmpty() && uAmount != null && !uAmount.isEmpty()
                 && date != null && !date.isEmpty() && coursesData != null && !coursesData.isEmpty()){
             if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId)){
                 try {

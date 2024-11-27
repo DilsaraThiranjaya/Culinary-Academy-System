@@ -92,7 +92,7 @@
                                  <children>
                                     <Group layoutX="220.0">
                                        <children>
-                                          <JFXTextField fx:id="txtStudentId1" focusColor="#994D1C" labelFloat="true" layoutY="18.0" onKeyReleased="#txtStudentIdOnKeyRelesed" prefHeight="35.0" prefWidth="330.0" promptText="Student ID *" unFocusColor="#994D1C">
+                                          <JFXTextField fx:id="txtStudentId" focusColor="#994D1C" labelFloat="true" layoutY="18.0" onKeyReleased="#txtStudentIdOnKeyRelesed" prefHeight="35.0" prefWidth="330.0" promptText="Student ID *" unFocusColor="#994D1C">
                                              <font>
                                                 <Font name="Arial" size="16.0" />
                                              </font>

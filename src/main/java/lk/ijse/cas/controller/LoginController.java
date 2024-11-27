@@ -61,7 +61,8 @@ public class LoginController {
 
         try {
             checkCredential(userID, password);
-        } catch (SQLException | ClassNotFoundException e) {
+            navigateToTheDashboard();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -109,54 +110,6 @@ public class LoginController {
         dashboardStage.setOnShown(event -> currentStage.close());
 
         dashboardStage.show();
-    }
-
-    @FXML
-    void btnRegisterOnAction(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Primary_Register_page.fxml"));
-
-        Stage stage = new Stage();
-
-        StackPane registerRoot = loader.load();
-
-        Rectangle clip = new Rectangle(958, 622);
-        clip.setArcHeight(90);
-        clip.setArcWidth(90);
-
-        registerRoot.setClip(clip);
-
-        RegistorController registorController = loader.getController();
-
-        WindowController windowController = new WindowController();
-        registorController.setWindowController(windowController);
-
-        Image img = new Image("/lk.ijse.cas/asserts/images/Login_box_side.jpg");
-        registorController.setLoginBoxShape(img);
-
-        Scene scene = new Scene(registerRoot);
-        scene.setFill(Color.TRANSPARENT);
-
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setScene(scene);
-        stage.centerOnScreen();
-
-        // Get the current stage and close it when the new stage is shown
-        Stage currentStage = (Stage) rootNode.getScene().getWindow();
-
-        // Create a transition animation
-        FadeTransition fadeOutTransition = new FadeTransition(Duration.millis(10), currentStage.getScene().getRoot());
-        fadeOutTransition.setFromValue(1.0);
-        fadeOutTransition.setToValue(0.0);
-        fadeOutTransition.setOnFinished(e -> {
-            currentStage.hide(); // Hide the current stage
-            stage.show(); // Show the registration stage
-
-            FadeTransition fadeInTransition = new FadeTransition(Duration.millis(10), stage.getScene().getRoot());
-            fadeInTransition.setFromValue(0.0);
-            fadeInTransition.setToValue(1.0);
-            fadeInTransition.play();
-        });
-        fadeOutTransition.play();
     }
 
     @FXML
