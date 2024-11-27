@@ -52,7 +52,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXTextField fx:id="txtFieldUserId1" focusColor="#994D1C" layoutY="19.0" prefHeight="35.0" prefWidth="400.0" promptText="Enter a new user ID" unFocusColor="#994D1C">
+                                          <JFXTextField fx:id="txtFieldUserIdUd" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldUserIdOnKeyReleased" prefHeight="35.0" prefWidth="400.0" promptText="Enter a new user ID" unFocusColor="#994D1C">
                                              <font>
                                                 <Font name="Arial" size="16.0" />
                                              </font>
@@ -69,7 +69,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXTextField fx:id="txtFieldUserName1" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldUserNameOnKeyReleased" prefHeight="35.0" prefWidth="400.0" promptText="Enter your name" unFocusColor="#994D1C">
+                                          <JFXTextField fx:id="txtFieldUserNameUd" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldUserNameOnKeyReleased" prefHeight="35.0" prefWidth="400.0" promptText="Enter your name" unFocusColor="#994D1C">
                                              <font>
                                                 <Font name="Arial" size="16.0" />
                                              </font>
@@ -86,8 +86,8 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXPasswordField fx:id="txtFieldNewPassword1" focusColor="#994D1C" layoutY="17.0" prefHeight="35.0" prefWidth="400.0" promptText="Enter new password" unFocusColor="#994D1C" />
-                                          <JFXPasswordField fx:id="txtFieldConfirmPassword1" focusColor="#994D1C" layoutY="64.0" prefHeight="35.0" prefWidth="400.0" promptText="Confirm password" unFocusColor="#994D1C" />
+                                          <JFXPasswordField fx:id="txtFieldNewPasswordUd" focusColor="#994D1C" layoutY="17.0" prefHeight="35.0" prefWidth="400.0" promptText="Enter new password" unFocusColor="#994D1C" />
+                                          <JFXPasswordField fx:id="txtFieldConfirmPasswordUd" focusColor="#994D1C" layoutY="64.0" prefHeight="35.0" prefWidth="400.0" promptText="Confirm password" unFocusColor="#994D1C" />
                                        </children>
                                     </Group>
                                     <HBox layoutX="15.0" layoutY="281.0" style="-fx-background-color: #6B240C; -fx-background-radius: 5;">
@@ -134,7 +134,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXTextField fx:id="txtFieldUserId" focusColor="#994D1C" layoutY="19.0" prefHeight="35.0" prefWidth="300.0" promptText="Enter a new user ID" unFocusColor="#994D1C">
+                                          <JFXTextField fx:id="txtFieldUserId" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldUserIdOnKeyReleased" prefHeight="35.0" prefWidth="300.0" promptText="Enter a new user ID" unFocusColor="#994D1C">
                                              <font>
                                                 <Font name="Arial" size="16.0" />
                                              </font>
@@ -208,7 +208,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXTextField fx:id="txtFieldEmail" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldUserNameOnKeyReleased" prefHeight="35.0" prefWidth="300.0" promptText="Enter your email" unFocusColor="#994D1C">
+                                          <JFXTextField fx:id="txtFieldEmail" focusColor="#994D1C" layoutY="19.0" onKeyReleased="#txtFieldEmailOnKeyReleased" prefHeight="35.0" prefWidth="300.0" promptText="Enter your email" unFocusColor="#994D1C">
                                              <font>
                                                 <Font name="Arial" size="16.0" />
                                              </font>

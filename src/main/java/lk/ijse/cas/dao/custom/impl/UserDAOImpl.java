@@ -2,104 +2,131 @@ package lk.ijse.cas.dao.custom.impl;
 
 import lk.ijse.cas.dao.custom.UserDAO;
 import lk.ijse.cas.entity.User;
+import lk.ijse.cas.util.SessionFactoryConfig;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
     @Override
-    public User searchById (User entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT userId, userName, password, employeeId FROM user WHERE userId = ?", entity.getUserId());
-        if(rst.next()){
-            User user = new User(
-                rst.getString("userId"),
-                rst.getString("userName"),
-                rst.getString("password"),
-                rst.getString("employeeId")
-            );
-            return user;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isAvailable(User entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT userId FROM user WHERE userId = ?", entity.getUserId());
-
-        return !rst.next();
-    }
-
-    @Override
-    public String getNextId() throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean update(User entity) throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean remove(User entity) throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean update(User entity, String userId) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE user SET userName = ?, password = ?, userID = ? WHERE userId = ?",
-                entity.getUserName(),
-                entity.getPassword(),
-                entity.getUserId(),
-                userId
-                );
-    }
-
-    @Override
-    public boolean isExist(User entity) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT * FROM user WHERE userId = ?", entity.getUserId());
-
-        return rst.next();
-    }
-
-    @Override
-    public List<User> getAll() throws SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("This feature is not implemented yet");
-    }
-
-    @Override
-    public boolean changePassword(String userId, String pass) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE user SET password =? WHERE userId=?", pass, userId);
-    }
-
-    @Override
-    public String getEmployeeId(String userId) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT employeeId FROM user WHERE userId = ?", userId);
-
-        if (resultSet.next()) {
-            String employeeId = resultSet.getString("employeeId");
-            return employeeId;
-        } else {
-            // Handle the case where the user ID is not found
+    public User searchById(User entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Fetch the user by ID
+            return session.get(User.class, entity.getUserId());
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
 
     @Override
-    public boolean save(User entity) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO user VALUES(?, ?, ?, ?)",
-                entity.getUserId(),
-                entity.getUserName(),
-                entity.getPassword(),
-                entity.getEmployeeId()
-                );
+    public boolean isAvailable(User entity) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Check if a user exists by userId
+            User foundUser = session.get(User.class, entity.getUserId());
+            return foundUser == null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public boolean isEmployeeIdAvailable(String employeeId) throws SQLException, ClassNotFoundException {
-        ResultSet rst = SQLUtil.execute("SELECT userId FROM user WHERE employeeId = ?", employeeId);
+    public String getNextId() {
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
 
-        return !rst.next();
+    @Override
+    public boolean update(User entity) {
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean remove(User entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            // Delete the user
+            session.delete(entity);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(User entity, String userId) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            // Fetch the existing user
+            User existingUser = session.get(User.class, userId);
+            if (existingUser != null) {
+                // Update the fields
+                existingUser.setUserName(entity.getUserName());
+                existingUser.setPassword(entity.getPassword());
+                existingUser.setUserId(entity.getUserId());
+                session.update(existingUser); // Update the entity in the database
+                transaction.commit();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isExist(User entity) {
+        return !isAvailable(entity); // Reuse `isAvailable` for checking existence
+    }
+
+    @Override
+    public List<User> getAll() {
+        throw new UnsupportedOperationException("This feature is not implemented yet");
+    }
+
+    @Override
+    public boolean changePassword(String userId, String pass) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            // Fetch the user by ID
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                user.setPassword(pass); // Update the password
+                session.update(user); // Persist the changes
+                transaction.commit();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean save(User entity) {
+        Transaction transaction = null;
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            transaction = session.beginTransaction();
+            // Save the user entity
+            session.save(entity);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return false;
+        }
     }
 }

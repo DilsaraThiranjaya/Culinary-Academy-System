@@ -142,7 +142,7 @@ public class PaymentDetailsDAOImpl implements PaymentDetailsDAO {
 
         try (Session session = SessionFactoryConfig.getInstance().getSession()) {
             // Fetch courseIds for the given paymentId
-            String hql = "SELECT pd.paymentDetailsPK.courseId FROM PaymentDetails pd WHERE pd.paymentDetailsPK.paymentId = :paymentId";
+            String hql = "SELECT pd.paymentDetailsPK.programId FROM PaymentDetails pd WHERE pd.paymentDetailsPK.paymentId = :paymentId";
             List<String> courseIds = session.createQuery(hql, String.class)
                     .setParameter("paymentId", pId)
                     .getResultList();

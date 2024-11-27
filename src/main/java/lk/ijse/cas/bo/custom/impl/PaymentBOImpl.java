@@ -177,7 +177,9 @@ public class PaymentBOImpl implements PaymentBO {
     @Override
     public PaymentDTO searchByPaymentId(String paymentId) throws SQLException, ClassNotFoundException {
         Payment payment = paymentDAO.searchById(new Payment(paymentId, null, null, null, null, null, null));
-        return payment != null ? payment.toDTO() : null;
+        PaymentDTO paymentDTO = payment.toDTO();
+        paymentDTO.setCp(paymentDetailsDAO.getPaymentDetails(paymentId));
+        return payment != null ? paymentDTO : null;
     }
 
     @Override

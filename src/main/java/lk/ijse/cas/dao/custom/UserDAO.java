@@ -10,7 +10,4 @@ public interface UserDAO extends CrudDAO<User> {
 
     boolean changePassword(String userId, String pass) throws SQLException, ClassNotFoundException;
 
-    String getEmployeeId(String userId) throws SQLException, ClassNotFoundException;
-
-    boolean isEmployeeIdAvailable(String employeeId) throws SQLException, ClassNotFoundException;
 }

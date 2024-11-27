@@ -16,6 +16,8 @@ import lk.ijse.cas.bo.custom.PaymentBO;
 import lk.ijse.cas.dto.CourseDTO;
 import lk.ijse.cas.dto.PaymentDTO;
 import lk.ijse.cas.dto.StudentDTO;
+import lk.ijse.cas.util.EmailSender;
+import lk.ijse.cas.util.TextField;
 import lk.ijse.cas.view.tdm.CoursePriceTm;
 import lk.ijse.cas.view.tdm.PaymentTm;
 import lk.ijse.cas.util.Regex;
@@ -80,9 +82,6 @@ public class PaymentController {
 
     @FXML
     private Label lblTotal;
-
-    @FXML
-    private AnchorPane paymentsPane;
 
     @FXML
     private TableView<CoursePriceTm> tableCourses;
@@ -375,10 +374,10 @@ public class PaymentController {
                 list.add(cp.getCourse());
             }
 
-            String emailTitle = "Payment Confirmation - Your Enrollment at Sahan Learner's";
+            String emailTitle = "Payment Confirmation - Your Enrollment at Culinary Academy";
 
             String emailContent = "Dear " + student.getFname() + ",\n\n" +
-                    "We're thrilled to confirm that your payment for enrollment at Sahan Learner's has been successfully processed! This email provides a summary of your registration details.\n\n" +
+                    "We're thrilled to confirm that your payment for enrollment at Culinary Academy has been successfully processed! This email provides a summary of your registration details.\n\n" +
 
                     "Student Information:\n" +
                     "* Full Name: " + student.getFname() + " " + student.getLname() + "\n" +
@@ -388,25 +387,25 @@ public class PaymentController {
                     "* Payment ID: " + paymnetId + "\n" +
                     "* Date: " + payment.getDate() + "\n" +
                     "* Payment Method: " + payment.getMethod() + "\n" +
-                    "* Description: " + payment.getDesc() + "\n\n" +
+                    "* Payment Type: " + payment.getType() + "\n\n" +
 
                     "Enrollment Details:\n" +
-                    "* Courses Enrolled:\n";
+                    "* Programs Enrolled:\n";
 
             for (String courseName : list) {
                 emailContent += "    * " + courseName + "\n";
             }
 
-            emailContent += "* Total Amount: " + payment.getAmount() + "\n\n" +
+            emailContent += payment.getType().equals("Full") ? "* Total Amount: " + payment.getTotalP() : "* Upfront Amount: " + payment.getUpfrontP() + "\n\n" +
 
                     "Next Steps:\n" +
-                    "* With your successful enrollment, you'll soon receive a separate email with access instructions for your chosen courses. This email will include login credentials and any additional information needed to begin learning.\n" +
-                    "* In the meantime, if you have any questions regarding your enrollment or the courses." +
-                    "* Our friendly support team is also available to assist you. You can reach them at 'sahanlearnersofficial@gmail.com' or by phone at 076677409 / 0742634670 (if applicable).\n\n" +
+                    "* With your successful enrollment, you'll soon receive a separate email with access instructions for your chosen programs.\n" +
+                    "* In the meantime, if you have any questions regarding your enrollment or the programs." +
+                    "* Our friendly support team is also available to assist you. You can reach them at 'culinaryacademy2024@gmail.com' or by phone at 076677409 / 0742634670 (if applicable).\n\n" +
 
-                    "Thank you for choosing Sahan Learner's! We're excited to have you on board and look forward to your learning journey with us.\n\n" +
+                    "Thank you for choosing Culinary Academy! We're excited to have you on board and look forward to your learning journey with us.\n\n" +
                     "Best regards,\n" +
-                    "Sahan Learner's";
+                    "Culinary Academy";
 
             EmailSender emailSender = new EmailSender();
             emailSender.sendEmail(student.getEmail(), emailTitle, emailContent);
@@ -437,9 +436,10 @@ public class PaymentController {
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
         String paymnetId = lblPaymentId.getText();
-        String desc = txtDescription.getText();
         String pMethod = cmbPMethod.getValue();
+        String pType = cmbPType.getValue();
         String studentId = txtStudentId.getText();
+        String uAmount = txtUAmount.getText();
         String amount = lblTotal.getText();
         String date = null;
 
@@ -464,16 +464,17 @@ public class PaymentController {
         // Update the fields of the existing Payment object
         try {
             if (payment != null && paymentBO.isPaymentExist(paymnetId)) {
-                payment.setDesc(desc);
+                payment.setType(pType);
                 payment.setMethod(pMethod);
-                payment.setAmount(amount);
+                payment.setTotalP(amount);
+                payment.setUpfrontP(uAmount);
                 payment.setSId(studentId);
                 payment.setDate(date);
                 payment.getCp().clear(); // Clear the existing course list
                 payment.getCp().addAll(coursesData); // Add the updated course list
 
-                if (paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && studentId != null && !studentId.isEmpty()
-                        && date != null && !date.isEmpty() && coursesData != null && !coursesData.isEmpty()) {
+                if(paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && pType != null && !pType.isEmpty() && studentId != null && !studentId.isEmpty() && uAmount != null && !uAmount.isEmpty()
+                        && date != null && !date.isEmpty() && coursesData != null && !coursesData.isEmpty()){
                     if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId)){
                         if(paymentBO.isStudentExist(studentId)){
                             try {
@@ -518,9 +519,10 @@ public class PaymentController {
                     if (payment != null){
                         lblPaymentId.setText(payment.getPId());
                         lblDate.setText(payment.getDate());
-                        txtDescription.setText(payment.getDesc());
+                        cmbPType.setValue(payment.getType());
                         cmbPMethod.setValue(payment.getMethod());
                         txtStudentId.setText(payment.getSId());
+                        txtUAmount.setText(String.valueOf(payment.getTotalP()));
 
                         // Update coursesData list
                         coursesData.clear(); // Clear existing courses
@@ -559,7 +561,6 @@ public class PaymentController {
         Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId);
     }
 
-    public void txtUAmountOnKeyRelesed(KeyEvent keyEvent) {
-
-    }
+    @FXML
+    void txtUAmountOnKeyRelesed(KeyEvent event) {Regex.setTextColor(TextField.DOUBLE, txtUAmount);}
 }
