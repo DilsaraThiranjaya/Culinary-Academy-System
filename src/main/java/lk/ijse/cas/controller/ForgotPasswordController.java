@@ -25,6 +25,7 @@ import lk.ijse.cas.util.EmailSender;
 import lk.ijse.cas.util.WindowController;
 import lk.ijse.cas.util.Regex;
 import lk.ijse.cas.util.TextField;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
@@ -60,7 +61,6 @@ public class ForgotPasswordController {
 
     ForgotPasswordBO forgotPasswordBO = (ForgotPasswordBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.FORGOT_PASSWORD);
 
-
     public void initialize() {
         otpCode = -1;
     }
@@ -75,40 +75,53 @@ public class ForgotPasswordController {
 
     public static int generateOTP() {
         Random random = new Random();
-        int otp = random.nextInt(900000) + 100000; // Generate a random number between 100000 and 999999
-        return otp;
+        return random.nextInt(900000) + 100000; // Generate a random number between 100000 and 999999
     }
 
     @FXML
     void btnCloseOnMouseClicked(MouseEvent event) {
-        Stage stage = (Stage) rootNode.getScene().getWindow();
-        if (windowController != null) {
-            windowController.close(stage);
+        try {
+            Stage stage = (Stage) rootNode.getScene().getWindow();
+            if (windowController != null) {
+                windowController.close(stage);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error closing the window: " + e.getMessage());
         }
     }
 
     @FXML
     void btnMinimizeOnMouseClicked(MouseEvent event) {
-        Stage stage = (Stage) rootNode.getScene().getWindow();
-        if (windowController != null) {
-            windowController.minimize(stage);
+        try {
+            Stage stage = (Stage) rootNode.getScene().getWindow();
+            if (windowController != null) {
+                windowController.minimize(stage);
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error minimizing the window: " + e.getMessage());
         }
     }
 
     @FXML
     void OnMousePressed(MouseEvent event) {
-// Record the mouse position relative to the window
-        Stage stage = (Stage) rootNode.getScene().getWindow();
-        xOffset = event.getSceneX();
-        yOffset = event.getSceneY();
+        try {
+            Stage stage = (Stage) rootNode.getScene().getWindow();
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error handling mouse press: " + e.getMessage());
+        }
     }
 
     @FXML
     void OnMouseDragged(MouseEvent event) {
-// Move the window by the mouse delta
-        Stage stage = (Stage) rootNode.getScene().getWindow();
-        stage.setX(event.getScreenX() - xOffset);
-        stage.setY(event.getScreenY() - yOffset);
+        try {
+            Stage stage = (Stage) rootNode.getScene().getWindow();
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error handling mouse drag: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -118,75 +131,67 @@ public class ForgotPasswordController {
         String pass = txtFieldPassword.getText();
         String confirmPass = txtFieldConfirmPassword.getText();
 
-        if(userId != null && !userId.isEmpty() && otp != null && !otp.isEmpty() && pass != null && !pass.isEmpty() && confirmPass != null && !confirmPass.isEmpty()){
-            if(isValid()){
+        if (userId != null && !userId.isEmpty() && otp != null && !otp.isEmpty() && pass != null && !pass.isEmpty() && confirmPass != null && !confirmPass.isEmpty()) {
+            if (isValid()) {
                 try {
-                    if(forgotPasswordBO.isUserExist(userId)){
-                        if(confirmPass.equals(pass)) {
-                            if(Integer.parseInt(otp) == otpCode){
+                    if (forgotPasswordBO.isUserExist(userId)) {
+                        if (confirmPass.equals(pass)) {
+                            if (Integer.parseInt(otp) == otpCode) {
                                 try {
                                     String hashedPassword = BCrypt.hashpw(pass, BCrypt.gensalt());
                                     boolean isUpdated = forgotPasswordBO.changePassword(userId, hashedPassword);
                                     if (isUpdated) {
-                                        new Alert(Alert.AlertType.CONFIRMATION, "Password Changed!").show();
+                                        showAlert(Alert.AlertType.CONFIRMATION, "Password Changed!");
                                         otpCode = -1;
-                                        txtOtpCode.setText("");
-                                        txtFieldUserid.setText("");
-                                        txtFieldPassword.setText("");
-                                        txtFieldConfirmPassword.setText("");
-                                        txtFieldUserid.requestFocus();
-                                    }else {
-                                        new Alert(Alert.AlertType.WARNING, "Something went wrong!").show();
+                                        clearFields();
+                                    } else {
+                                        showAlert(Alert.AlertType.WARNING, "Something went wrong!");
                                     }
                                 } catch (SQLException e) {
-                                    new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                                    showAlert(Alert.AlertType.ERROR, "Error updating password: " + e.getMessage());
                                 }
                             } else {
-                                new Alert(Alert.AlertType.ERROR, "OTP not matched!").show();
+                                showAlert(Alert.AlertType.ERROR, "OTP not matched!");
                                 txtOtpCode.requestFocus();
                             }
                         } else {
-                            new Alert(Alert.AlertType.ERROR, "Passwors is not matched!").show();
-                            txtFieldPassword.setText("");
-                            txtFieldConfirmPassword.setText("");
-                            txtFieldPassword.requestFocus();
+                            showAlert(Alert.AlertType.ERROR, "Passwords do not match!");
+                            clearPasswordFields();
                         }
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "User not found!").show();
+                        showAlert(Alert.AlertType.ERROR, "User not found!");
                         txtFieldUserid.requestFocus();
                     }
                 } catch (SQLException | ClassNotFoundException e) {
-                    new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                    showAlert(Alert.AlertType.ERROR, "Error while checking user: " + e.getMessage());
                 }
             } else {
-                new Alert(Alert.AlertType.ERROR, "Incorrect value in fields!").show();
+                showAlert(Alert.AlertType.ERROR, "Incorrect value in fields!");
             }
         } else {
-            new Alert(Alert.AlertType.WARNING, "Enter all mandatory details!").show();
+            showAlert(Alert.AlertType.WARNING, "Enter all mandatory details!");
         }
     }
 
     @FXML
     void btnLoginOnAction(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/lk.ijse.cas/Login_page.fxml"));
-
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/lk.ijse.cas/Login_page.fxml"));
         Stage stage = new Stage();
 
         StackPane loginRoot = null;
         try {
             loginRoot = loader.load();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            showAlert(Alert.AlertType.ERROR, "Error loading login page: " + e.getMessage());
+            return;
         }
 
         Rectangle clip = new Rectangle(958, 622);
         clip.setArcHeight(90);
         clip.setArcWidth(90);
-
         loginRoot.setClip(clip);
 
         LoginController loginController = loader.getController();
-
         WindowController windowController = new WindowController();
         loginController.setWindowController(windowController);
 
@@ -197,16 +202,13 @@ public class ForgotPasswordController {
         stage.setScene(scene);
         stage.centerOnScreen();
 
-        // Get the current stage and close it when the new stage is shown
         Stage currentStage = (Stage) rootNode.getScene().getWindow();
-
-        // Create a transition animation
         FadeTransition fadeOutTransition = new FadeTransition(Duration.millis(10), currentStage.getScene().getRoot());
         fadeOutTransition.setFromValue(1.0);
         fadeOutTransition.setToValue(0.0);
         fadeOutTransition.setOnFinished(e -> {
-            currentStage.hide(); // Hide the current stage
-            stage.show(); // Show the registration stage
+            currentStage.hide();
+            stage.show();
 
             FadeTransition fadeInTransition = new FadeTransition(Duration.millis(10), stage.getScene().getRoot());
             fadeInTransition.setFromValue(0.0);
@@ -219,51 +221,61 @@ public class ForgotPasswordController {
     @FXML
     void btnSendOtpOnAction(ActionEvent event) {
         otpCode = generateOTP();
-
         String userId = txtFieldUserid.getText();
 
-        if(userId != null && !userId.isEmpty()){
+        if (userId != null && !userId.isEmpty()) {
             try {
-                if(forgotPasswordBO.isUserExist(userId)){
-                    UserDTO userDTO = null;
-                    try {
-                        userDTO = forgotPasswordBO.searchUserById(userId);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (forgotPasswordBO.isUserExist(userId)) {
+                    UserDTO userDTO = forgotPasswordBO.searchUserById(userId);
 
                     String emailTitle = "OTP Code";
-                    String emailContent = "Your One Time OTP Code: " + String.valueOf(otpCode);
+                    String emailContent = "Your One-Time OTP Code: " + otpCode;
 
                     EmailSender emailSender = new EmailSender();
                     boolean isSent = emailSender.sendEmail(userDTO.getEmail(), emailTitle, emailContent);
 
-                    if(isSent){
-                        new Alert(Alert.AlertType.CONFIRMATION, "OTP sent to your email successfully!").show();
+                    if (isSent) {
+                        showAlert(Alert.AlertType.CONFIRMATION, "OTP sent to your email successfully!");
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "OTP not sent!").show();
+                        showAlert(Alert.AlertType.ERROR, "Failed to send OTP!");
                     }
                 } else {
-                    new Alert(Alert.AlertType.ERROR, "User not found!").show();
+                    showAlert(Alert.AlertType.ERROR, "User not found!");
                     txtFieldUserid.requestFocus();
                 }
             } catch (SQLException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                showAlert(Alert.AlertType.ERROR, "Error while processing OTP: " + e.getMessage());
             }
         } else {
-            new Alert(Alert.AlertType.WARNING, "Enter a User ID!").show();
+            showAlert(Alert.AlertType.WARNING, "Enter a User ID!");
             txtFieldUserid.requestFocus();
         }
     }
 
-    public boolean isValid(){
-        if (!Regex.setTextColor(TextField.OTP,txtOtpCode)) return false;
-        return true;
+    public boolean isValid() {
+        return Regex.setTextColor(TextField.OTP, txtOtpCode);
     }
 
     @FXML
     void txtOtpCodeOnKeyReleased(KeyEvent event) {
-        Regex.setTextColor(TextField.OTP,txtOtpCode);
+        Regex.setTextColor(TextField.OTP, txtOtpCode);
     }
 
+    private void showAlert(Alert.AlertType alertType, String message) {
+        new Alert(alertType, message).show();
+    }
+
+    private void clearFields() {
+        txtOtpCode.setText("");
+        txtFieldUserid.setText("");
+        txtFieldPassword.setText("");
+        txtFieldConfirmPassword.setText("");
+        txtFieldUserid.requestFocus();
+    }
+
+    private void clearPasswordFields() {
+        txtFieldPassword.setText("");
+        txtFieldConfirmPassword.setText("");
+        txtFieldPassword.requestFocus();
+    }
 }
