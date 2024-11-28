@@ -3,6 +3,7 @@ package lk.ijse.cas.controller;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -23,19 +24,7 @@ public class SettingsController {
     private JFXComboBox<String> cmbPosition;
 
     @FXML
-    private JFXPasswordField txtFieldConfirmPassword;
-
-    @FXML
-    private JFXPasswordField txtFieldConfirmPasswordUd;
-
-    @FXML
     private JFXTextField txtFieldEmail;
-
-    @FXML
-    private JFXPasswordField txtFieldNewPassword;
-
-    @FXML
-    private JFXPasswordField txtFieldNewPasswordUd;
 
     @FXML
     private JFXTextField txtFieldUserId;
@@ -48,6 +37,18 @@ public class SettingsController {
 
     @FXML
     private JFXTextField txtFieldUserNameUd;
+
+    @FXML
+    private MFXPasswordField txtFieldConfirmPassword;
+
+    @FXML
+    private MFXPasswordField txtFieldConfirmPasswordUd;
+
+    @FXML
+    private MFXPasswordField txtFieldNewPassword;
+
+    @FXML
+    private MFXPasswordField txtFieldNewPasswordUd;
 
     @FXML
     private Group registorGroup;

@@ -2,8 +2,8 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
-<?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
@@ -86,8 +86,16 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXPasswordField fx:id="txtFieldNewPasswordUd" focusColor="#994D1C" layoutY="17.0" prefHeight="35.0" prefWidth="400.0" promptText="Enter new password" unFocusColor="#994D1C" />
-                                          <JFXPasswordField fx:id="txtFieldConfirmPasswordUd" focusColor="#994D1C" layoutY="64.0" prefHeight="35.0" prefWidth="400.0" promptText="Confirm password" unFocusColor="#994D1C" />
+                                          <MFXPasswordField fx:id="txtFieldNewPasswordUd" floatMode="ABOVE" layoutY="18.0" prefHeight="35.0" prefWidth="400.0" promptText="Enter new password" style="-fx-background-color: transparent; -fx-border-color: #994d1c; -fx-border-width: 0 0 2 0; -fx-border-radius: 0;">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </MFXPasswordField>
+                                          <MFXPasswordField fx:id="txtFieldConfirmPasswordUd" floatMode="ABOVE" layoutY="65.0" prefHeight="35.0" prefWidth="400.0" promptText="Confirm password" style="-fx-background-color: transparent; -fx-border-color: #994d1c; -fx-border-width: 0 0 2 0; -fx-border-radius: 0;">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </MFXPasswordField>
                                        </children>
                                     </Group>
                                     <HBox layoutX="15.0" layoutY="281.0" style="-fx-background-color: #6B240C; -fx-background-radius: 5;">
@@ -168,8 +176,16 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <JFXPasswordField fx:id="txtFieldNewPassword" focusColor="#994D1C" layoutY="21.0" prefHeight="35.0" prefWidth="300.0" promptText="Enter new password" unFocusColor="#994D1C" />
-                                          <JFXPasswordField fx:id="txtFieldConfirmPassword" focusColor="#994D1C" layoutY="83.0" prefHeight="35.0" prefWidth="300.0" promptText="Confirm password" unFocusColor="#994D1C" />
+                                          <MFXPasswordField fx:id="txtFieldNewPassword" floatMode="ABOVE" layoutY="23.0" prefHeight="35.0" prefWidth="300.0" promptText="Enter new password" style="-fx-background-color: transparent; -fx-border-color: #994d1c; -fx-border-width: 0 0 2 0; -fx-border-radius: 0;">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </MFXPasswordField>
+                                          <MFXPasswordField fx:id="txtFieldConfirmPassword" floatMode="ABOVE" layoutY="84.0" prefHeight="35.0" prefWidth="300.0" promptText="Confirm password" style="-fx-background-color: transparent; -fx-border-color: #994d1c; -fx-border-width: 0 0 2 0; -fx-border-radius: 0;">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </MFXPasswordField>
                                        </children>
                                     </Group>
                                     <HBox layoutX="125.0" layoutY="226.0" style="-fx-background-color: #6B240C; -fx-background-radius: 5;">

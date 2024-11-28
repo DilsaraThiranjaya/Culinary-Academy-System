@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXPasswordField?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.geometry.Insets?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import java.net.URL?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Hyperlink?>
@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="rootNode" onMouseDragged="#OnMouseDragged" onMousePressed="#OnMousePressed" stylesheets="@asserts/css/stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.cas.controller.LoginController">
+<StackPane fx:id="rootNode" onMouseDragged="#OnMouseDragged" onMousePressed="#OnMousePressed" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.cas.controller.LoginController">
    <children>
       <Group>
          <children>
@@ -24,14 +24,11 @@
             <Rectangle arcHeight="90.0" arcWidth="90.0" fill="WHITE" height="622.0" layoutX="448.0" stroke="#994D1Ca1" strokeType="INSIDE" strokeWidth="0.0" width="510.0" />
             <Group layoutX="528.0" layoutY="234.0">
                <children>
-                  <JFXTextField fx:id="txtFieldUserID" focusColor="#e48f45" layoutX="1.0" layoutY="26.0" prefHeight="35.0" prefWidth="350.0" promptText="User ID" style="-fx-padding: 0 0 0 40; -fx-background-color: #f5cea4aa;" unFocusColor="#e48f45">
+                  <MFXTextField fx:id="txtFieldUserID" floatMode="BORDER" layoutX="1.0" layoutY="26.0" prefHeight="35.0" prefWidth="350.0" promptText="User ID" style="-fx-padding: 0 0 0 40; -fx-background-color: #f5cea4aa;">
                      <font>
-                        <Font name="Arial" size="16.0" />
+                        <Font name="Arial" size="14.0" />
                      </font>
-                     <opaqueInsets>
-                        <Insets left="10.0" />
-                     </opaqueInsets>
-                  </JFXTextField>
+                  </MFXTextField>
                   <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="11.0" layoutY="32.0">
                      <image>
                         <Image url="@asserts/icons/UserIdField_icon.png" />
@@ -41,11 +38,11 @@
             </Group>
             <Group layoutX="528.0" layoutY="300.0">
                <children>
-                  <JFXPasswordField fx:id="txtFieldPassword" focusColor="#e48f45" layoutY="25.0" prefHeight="35.0" prefWidth="350.0" promptText="Password" style="-fx-padding: 0 0 0 40; -fx-background-color: #f5cea4aa;" unFocusColor="#e48f45">
+                  <MFXPasswordField fx:id="txtFieldPassword" allowPaste="true" floatMode="BORDER" layoutY="25.0" prefHeight="35.0" prefWidth="350.0" promptText="Password" style="-fx-padding: 0 5 0 40; -fx-background-color: #f5cea4aa;">
                      <font>
-                        <Font name="Arial" size="16.0" />
+                        <Font name="Arial" size="14.0" />
                      </font>
-                  </JFXPasswordField>
+                  </MFXPasswordField>
                   <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="9.0" layoutY="30.0">
                      <image>
                         <Image url="@asserts/icons/PasswordField_icon.png" />
@@ -122,4 +119,8 @@
          </children>
       </Group>
    </children>
+   <stylesheets>
+      <URL value="@asserts/css/stylesheet.css" />
+      <URL value="@asserts/css/MfxStyle.css" />
+   </stylesheets>
 </StackPane>

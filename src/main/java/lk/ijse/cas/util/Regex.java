@@ -1,6 +1,7 @@
 package lk.ijse.cas.util;
 
 import com.jfoenix.controls.JFXTextField;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.scene.paint.Paint;
 
 import java.util.regex.Matcher;
@@ -78,6 +79,18 @@ public class Regex {
         }else {
             field.setFocusColor(Paint.valueOf("Red"));
             field.setUnFocusColor(Paint.valueOf("Red"));
+            return false;
+        }
+    }
+
+    public static boolean setTextColor(TextField location, MFXTextField field) {
+        if (Regex.isTextFieldValid(location, field.getText())) {
+            // Apply green styles dynamically for valid input
+            field.setStyle("-fx-border-color: green; -fx-focus-color: green;");
+            return true;
+        } else {
+            // Apply red styles dynamically for invalid input
+            field.setStyle("-fx-border-color: red; -fx-focus-color: red;");
             return false;
         }
     }

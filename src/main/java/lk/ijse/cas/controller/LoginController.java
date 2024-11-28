@@ -1,7 +1,7 @@
 package lk.ijse.cas.controller;
 
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXTextField;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,12 +28,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class LoginController {
+
     @FXML
-    public JFXTextField txtFieldUserID;
+    private MFXPasswordField txtFieldPassword;
+
     @FXML
-    public JFXPasswordField txtFieldPassword;
+    private MFXTextField txtFieldUserID;
+
     @FXML
     private StackPane rootNode;
+
     @FXML
     private Rectangle loginBoxShape;
 

@@ -1,0 +1,9 @@
+.mfx-text-field {
+    -fx-border-color: transparent; /* Border when not focused */
+    -fx-border-radius: 5px;
+}
+
+.mfx-text-field:focused {
+    -fx-border-color: #994D1Ca1; /* Border color when focused */
+    -fx-border-width: 2px;
+}

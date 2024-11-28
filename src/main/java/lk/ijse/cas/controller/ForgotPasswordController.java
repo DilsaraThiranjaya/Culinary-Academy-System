@@ -1,7 +1,7 @@
 package lk.ijse.cas.controller;
 
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXTextField;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,16 +40,16 @@ public class ForgotPasswordController {
     private StackPane rootNode;
 
     @FXML
-    private JFXPasswordField txtFieldConfirmPassword;
+    private MFXPasswordField txtFieldConfirmPassword;
 
     @FXML
-    private JFXPasswordField txtFieldPassword;
+    private MFXPasswordField txtFieldPassword;
 
     @FXML
-    private JFXTextField txtFieldUserid;
+    private MFXTextField txtFieldUserid;
 
     @FXML
-    private JFXTextField txtOtpCode;
+    private MFXTextField txtOtpCode;
 
     private WindowController windowController;
 
