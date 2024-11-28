@@ -109,7 +109,8 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public Student searchById(Student entity) throws SQLException, ClassNotFoundException {
         try (Session session = SessionFactoryConfig.getInstance().getSession()) {
-            return session.get(Student.class, entity.getStudentId()); // Fetches the Student entity by ID
+            Student student = session.get(Student.class, entity.getStudentId());
+            return student; // Fetches the Student entity by ID
         } catch (Exception e) {
             e.printStackTrace();
             return null;

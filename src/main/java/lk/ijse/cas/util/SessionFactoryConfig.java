@@ -13,23 +13,27 @@ public class SessionFactoryConfig {
     private final SessionFactory sessionFactory;
 
     private SessionFactoryConfig() {
-        Configuration configuration = new Configuration();
-        configuration.addAnnotatedClass(Student.class);
-        configuration.addAnnotatedClass(Course.class);
-        configuration.addAnnotatedClass(Payment.class);
-        configuration.addAnnotatedClass(CourseDetails.class);
-        configuration.addAnnotatedClass(PaymentDetails.class);
-        configuration.addAnnotatedClass(User.class);
-
-        Properties properties = new Properties();
         try {
+            Properties properties = new Properties();
             properties.load(ClassLoader.getSystemClassLoader().getResourceAsStream("hibernate.properties"));
-        } catch (IOException e) {
-            System.out.println("file not found");
-        }
-        configuration.mergeProperties(properties);
 
-        sessionFactory = configuration.buildSessionFactory();
+            Configuration configuration = new Configuration();
+            // Add properties before adding annotated classes
+            configuration.setProperties(properties);
+
+            // Add annotated classes
+            configuration.addAnnotatedClass(Student.class);
+            configuration.addAnnotatedClass(Course.class);
+            configuration.addAnnotatedClass(Payment.class);
+            configuration.addAnnotatedClass(CourseDetails.class);
+            configuration.addAnnotatedClass(PaymentDetails.class);
+            configuration.addAnnotatedClass(User.class);
+
+            sessionFactory = configuration.buildSessionFactory();
+        } catch (IOException e) {
+            System.out.println("Configuration Error: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public static SessionFactoryConfig getInstance() {
@@ -38,8 +42,7 @@ public class SessionFactoryConfig {
                 sessionFactoryConfig;
     }
 
-    public final Session getSession(){
+    public Session getSession() {
         return sessionFactory.openSession();
     }
-
 }

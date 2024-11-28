@@ -1,6 +1,5 @@
 package lk.ijse.cas.controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -8,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.SettingsBO;
 import lk.ijse.cas.dto.UserDTO;
@@ -59,8 +57,8 @@ public class SettingsController {
     }
 
     private void initializeTextFeildText() {
-        txtFieldUserId.setText(user.getUserId());
-        txtFieldUserName.setText(user.getUserName());
+        txtFieldUserIdUd.setText(user.getUserId());
+        txtFieldUserNameUd.setText(user.getUserName());
     }
 
     private void initializeCmb() {
@@ -80,7 +78,7 @@ public class SettingsController {
         String confirmPassword = txtFieldConfirmPasswordUd.getText();
 
         if(userId != null && !userId.isEmpty() && userName != null && !userName.isEmpty() && newPassword != null && !newPassword.isEmpty() && confirmPassword != null && !confirmPassword.isEmpty()) {
-            if(Regex.setTextColor(TextField.NAME,txtFieldUserName)){
+            if(Regex.setTextColor(TextField.NAME,txtFieldUserNameUd)){
                 try {
                     if (user.getUserId().equals(userId)){
                         UserDTO oldUser = settingsBO.searchUserById(userId);
@@ -90,9 +88,9 @@ public class SettingsController {
                                 boolean isUpdated = settingsBO.updateUser(newUser,user.getUserId());
                                 if (isUpdated) {
                                     new Alert(Alert.AlertType.CONFIRMATION, "User details updated!").show();
-                                    txtFieldNewPassword.setText("");
-                                    txtFieldConfirmPassword.setText("");
-                                    txtFieldUserId.requestFocus();
+                                    txtFieldNewPasswordUd.setText("");
+                                    txtFieldConfirmPasswordUd.setText("");
+                                    txtFieldUserIdUd.requestFocus();
                                 }else {
                                     new Alert(Alert.AlertType.WARNING, "Something went wrong!").show();
                                 }
@@ -101,13 +99,13 @@ public class SettingsController {
                             }
                         } else {
                             new Alert(Alert.AlertType.ERROR, "Passwors is not matched!").show();
-                            txtFieldNewPassword.setText("");
-                            txtFieldConfirmPassword.setText("");
-                            txtFieldNewPassword.requestFocus();
+                            txtFieldNewPasswordUd.setText("");
+                            txtFieldConfirmPasswordUd.setText("");
+                            txtFieldNewPasswordUd.requestFocus();
                         }
                     } else {
                         new Alert(Alert.AlertType.ERROR, "User ID already exist!").show();
-                        txtFieldUserId.requestFocus();
+                        txtFieldUserIdUd.requestFocus();
                     }
                 } catch (SQLException | ClassNotFoundException e) {
                     new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -129,51 +127,39 @@ public class SettingsController {
         String password = txtFieldNewPassword.getText();
         String confirmPassword = txtFieldConfirmPassword.getText();
 
-        if(userId != null && !userId.isEmpty() && username != null && !username.isEmpty() && employeeId != null && !employeeId.isEmpty() && password != null && !password.isEmpty() && confirmPassword != null && !confirmPassword.isEmpty() && otp != null && !otp.isEmpty()){
+        if(userId != null && !userId.isEmpty() && username != null && !username.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && confirmPassword != null && !confirmPassword.isEmpty()){
             if(isValid()){
                 try {
-                    if (registorBO.isUserAvailable(userId)){
-                        if(registorBO.isEmployeeAvailable(employeeId)){
-                            UserDTO user = new UserDTO(userId, username, password, employeeId);
+                    if (settingsBO.isUserAvailable(userId)){
+                        UserDTO user = new UserDTO(userId, username, position, password, email);
 
-                            if(confirmPassword.equals(password)) {
-                                if(Integer.parseInt(otp) == otpCode){
-                                    try {
-                                        boolean isSaved = registorBO.registor(user);
-                                        if (isSaved) {
-                                            new Alert(Alert.AlertType.CONFIRMATION, "New user registored!").show();
-                                            otpCode = -1;
-                                            txtOtpCode.setText("");
-                                            txtFieldUserid.setText("");
-                                            txtFieldUsername.setText("");
-                                            cmbEmployees.setValue("");
-                                            txtFieldPassword.setText("");
-                                            txtFieldConfirmPassword.setText("");
-                                            txtFieldUserid.requestFocus();
-                                        }else {
-                                            new Alert(Alert.AlertType.WARNING, "Something went wrong!").show();
-                                        }
-                                    } catch (SQLException e) {
-                                        new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-                                    }
-                                } else {
-                                    new Alert(Alert.AlertType.ERROR, "OTP not matched!").show();
-                                    txtOtpCode.requestFocus();
+                        if(confirmPassword.equals(password)) {
+                            try {
+                                boolean isSaved = settingsBO.registor(user);
+                                if (isSaved) {
+                                    new Alert(Alert.AlertType.CONFIRMATION, "New user registored!").show();
+                                    txtFieldUserId.setText("");
+                                    txtFieldUserName.setText("");
+                                    cmbPosition.setValue("");
+                                    txtFieldEmail.setText("");
+                                    txtFieldNewPassword.setText("");
+                                    txtFieldConfirmPassword.setText("");
+                                    txtFieldUserId.requestFocus();
+                                }else {
+                                    new Alert(Alert.AlertType.WARNING, "Something went wrong!").show();
                                 }
-                            } else {
-                                new Alert(Alert.AlertType.ERROR, "Passwors is not matched!").show();
-                                txtFieldPassword.setText("");
-                                txtFieldConfirmPassword.setText("");
-                                txtFieldPassword.requestFocus();
+                            } catch (SQLException e) {
+                                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
                             }
-                        }else {
-                            new Alert(Alert.AlertType.ERROR, "User with this Employee ID already exist!").show();
-                            cmbEmployees.setValue("");
-                            cmbEmployees.requestFocus();
+                        } else {
+                            new Alert(Alert.AlertType.ERROR, "Passwors is not matched!").show();
+                            txtFieldNewPassword.setText("");
+                            txtFieldConfirmPassword.setText("");
+                            txtFieldNewPassword.requestFocus();
                         }
                     }else {
                         new Alert(Alert.AlertType.ERROR, "User ID already exist!").show();
-                        txtFieldUserid.requestFocus();
+                        txtFieldUserId.requestFocus();
                     }
                 } catch (SQLException | ClassNotFoundException e) {
                     new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -186,19 +172,25 @@ public class SettingsController {
         }
     }
 
+    public boolean isValid(){
+        if (!Regex.setTextColor(TextField.NAME,txtFieldUserName)) return false;
+        if (!Regex.setTextColor(TextField.EMAIL,txtFieldEmail)) return false;
+        return true;
+    }
+
     @FXML
-    void txtFieldUserNameOnKeyReleased(KeyEvent event) {
-        Regex.setTextColor(TextField.NAME,txtFieldUserName);
+    void txtFieldUserNameUdOnKeyReleased(KeyEvent event) {
+        Regex.setTextColor(TextField.NAME,txtFieldUserNameUd);
     }
 
     @FXML
     void txtFieldEmailOnKeyReleased(KeyEvent event) {
-
+        Regex.setTextColor(TextField.EMAIL,txtFieldEmail);
     }
 
     @FXML
-    void txtFieldUserIdOnKeyReleased(KeyEvent event) {
-
+    void txtFieldUserNameOnKeyReleased(KeyEvent event) {
+        Regex.setTextColor(TextField.NAME,txtFieldUserName);
     }
 
 }

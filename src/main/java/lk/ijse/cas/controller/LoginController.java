@@ -56,28 +56,30 @@ public class LoginController {
     }
 
     public void btnLoginOnAction(ActionEvent actionEvent) throws IOException {
-        String userID = txtFieldUserID.getText();
+        String userId = txtFieldUserID.getText();
         String password = txtFieldPassword.getText();
 
-        try {
-            checkCredential(userID, password);
-            navigateToTheDashboard();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (userId != null && !userId.isEmpty() && password != null && !password.isEmpty()) {
+            try {
+                checkCredential(userId, password);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            new Alert(Alert.AlertType.WARNING, "Enter all mandatory details!").show();
         }
     }
 
     private void checkCredential(String userID, String password) throws SQLException, IOException, ClassNotFoundException {
         UserDTO userDTO = loginBO.searchUserById(userID);
 
-        if(userDTO != null){
-
+        if (userDTO != null) {
             String dbPw = userDTO.getPassword();
 
-            if(dbPw.equals(password)){
-
+            if (dbPw.equals(password)) {
                 user = userDTO;
-
                 navigateToTheDashboard();
             } else {
                 new Alert(Alert.AlertType.ERROR, "Password is incorrect!").show();

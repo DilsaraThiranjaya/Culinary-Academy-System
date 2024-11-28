@@ -1,9 +1,10 @@
 package lk.ijse.cas.bo.custom;
 
 import lk.ijse.cas.bo.SuperBO;
+import lk.ijse.cas.dto.UserDTO;
 
 import java.sql.SQLException;
 
 public interface DashboardBO extends SuperBO {
-    public String getRole(String employeeId) throws SQLException, ClassNotFoundException ;
+    public UserDTO getRole(String userId) throws SQLException, ClassNotFoundException ;
 }

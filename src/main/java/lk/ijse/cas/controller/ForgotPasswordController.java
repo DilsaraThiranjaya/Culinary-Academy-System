@@ -1,6 +1,5 @@
 package lk.ijse.cas.controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.animation.FadeTransition;
@@ -21,6 +20,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.ForgotPasswordBO;
+import lk.ijse.cas.dto.UserDTO;
+import lk.ijse.cas.util.EmailSender;
 import lk.ijse.cas.util.WindowController;
 import lk.ijse.cas.util.Regex;
 import lk.ijse.cas.util.TextField;
@@ -30,9 +31,6 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class ForgotPasswordController {
-
-    @FXML
-    private JFXButton btnChangePass;
 
     @FXML
     private Rectangle loginBoxShape;
@@ -225,34 +223,23 @@ public class ForgotPasswordController {
         if(userId != null && !userId.isEmpty()){
             try {
                 if(forgotPasswordBO.isUserExist(userId)){
-                    String employeeId = null;
+                    UserDTO userDTO = null;
                     try {
-                        employeeId = forgotPasswordBO.getEmployeeId(userId);
+                        userDTO = forgotPasswordBO.searchUserById(userId);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
 
-                    if(employeeId != null){
-                        EmployeeDTO employee = null;
-                        try {
-                            employee = forgotPasswordBO.searchEmployeeById(employeeId);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
+                    String emailTitle = "OTP Code";
+                    String emailContent = "Your One Time OTP Code: " + String.valueOf(otpCode);
 
-                        String emailTitle = "OTP Code";
-                        String emailContent = "Your One Time OTP Code: " + String.valueOf(otpCode);
+                    EmailSender emailSender = new EmailSender();
+                    boolean isSent = emailSender.sendEmail(userDTO.getEmail(), emailTitle, emailContent);
 
-                        EmailSender emailSender = new EmailSender();
-                        boolean isSent = emailSender.sendEmail(employee.getEmail(), emailTitle, emailContent);
-
-                        if(isSent){
-                            new Alert(Alert.AlertType.CONFIRMATION, "OTP sent to your email successfully!").show();
-                        } else {
-                            new Alert(Alert.AlertType.ERROR, "OTP not sent!").show();
-                        }
+                    if(isSent){
+                        new Alert(Alert.AlertType.CONFIRMATION, "OTP sent to your email successfully!").show();
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "Employee not found!").show();
+                        new Alert(Alert.AlertType.ERROR, "OTP not sent!").show();
                     }
                 } else {
                     new Alert(Alert.AlertType.ERROR, "User not found!").show();

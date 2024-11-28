@@ -17,14 +17,10 @@ public class PaymentDetails implements Serializable {
     @EmbeddedId
     private PaymentDetailsPK paymentDetailsPK;
     @ManyToOne
-    @JoinColumn(name = "paymentId",
-            insertable = false,
-            updatable = false)
-    private String paymentId;
+    @JoinColumn(name = "paymentId", insertable = false, updatable = false)
+    private Payment payment;
 
     @ManyToOne
-    @JoinColumn(name = "programId",
-            insertable = false,
-            updatable = false)
-    private String programId;
+    @JoinColumn(name = "programId", insertable = false, updatable = false)
+    private Course program;
 }

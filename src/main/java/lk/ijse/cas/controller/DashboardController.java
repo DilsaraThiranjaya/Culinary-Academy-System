@@ -81,6 +81,8 @@ public class DashboardController {
 
 
     public void initialize() {
+        loadPage("Student_page");
+        handleSelection(btnStudents,iconStudents);
         sidebarButtonHoverUtilize();
     }
 
@@ -103,18 +105,14 @@ public class DashboardController {
     private void setDisabledButton() {
         String role = null;
         try {
-            role = dashboardBO.getRole(user.getEmployeeId());
+            UserDTO userDTO = dashboardBO.getRole(user.getUserId());
+            role = userDTO.getPosition();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        if(role != null && role.equals("Instructor")){
+        if(role != null && role.equals("Coordinator")){
             disableSidebarButtons();
-            loadPage("Vehicle_page");
-            setDefaultSelectedButtonStyle(role);
-        } else {
-            loadPage("Employee_page");
-            setDefaultSelectedButtonStyle(role);
         }
     }
 
@@ -176,13 +174,6 @@ public class DashboardController {
                 icon.setStyle("-fx-background-color:  transparent; -fx-background-radius: 0px 0px 0px 0px; -fx-border-width: 0px 0px 0px 0px;");
             }
         });
-    }
-
-    private void setDefaultSelectedButtonStyle(String role) {
-        selectedButton = btnStudents; // Set the initial selected button
-        selectedIcon = iconStudents;
-        selectedButton.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-background-radius: 0px 30px 30px 0px; -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #994D1C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;"); // Apply the selected style
-        selectedIcon.setStyle("-fx-background-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-effect: dropshadow(gaussian, #F5CCA0, 10, 0, 0, 0); -fx-transition: background-color 0.3s, scale-x 0.3s, scale-y 0.3s; -fx-border-color:  linear-gradient(from 53.5545% 61.6114% to 53.5545% 100.0%, #6B240C 0.0%, #F5CCA0 100.0%); -fx-border-width: 0px 0px 0px 3px; -fx-border-radius: 5px;");
     }
 
     private void handleSelection(JFXButton button, HBox icon) {

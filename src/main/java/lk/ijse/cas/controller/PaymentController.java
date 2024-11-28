@@ -208,7 +208,8 @@ public class PaymentController {
     }
 
     private void initializeTotal() {
-        lblTotal.setText("0.0");
+        lblTotal.setText("0.00");
+        lblDue.setText("0.00");
     }
 
     private void initializeCourses() {
@@ -255,6 +256,20 @@ public class PaymentController {
             total += cp.getPrice();
         }
         return total;
+    }
+
+    private void calculateDue(double total) {
+        if(!(cmbPType.getValue() == null)){
+            if (cmbPType.getValue().equals("Upfront")) {
+                double due = total - Double.parseDouble(txtUAmount.getText());
+
+                if (due < 0 && due > total) {
+                    lblDue.setText("0.00");
+                }
+
+                lblDue.setText(String.format("%.2f", due));
+            }
+        }
     }
 
     @FXML
@@ -333,13 +348,26 @@ public class PaymentController {
             // Now you can use the sqlDate string as needed
         }
 
-        PaymentDTO payment = new PaymentDTO(paymnetId, date, pMethod, pType, uAmount, amount, studentId, coursesData);
+        PaymentDTO payment = null;
+        if (pType == "Full") {
+            payment = new PaymentDTO(paymnetId, date, pMethod, pType, null, amount, studentId, coursesData);
+        } else {
+            payment = new PaymentDTO(paymnetId, date, pMethod, pType, uAmount, amount, studentId, coursesData);
+        }
 
-        if(paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && pType != null && !pType.isEmpty() && studentId != null && !studentId.isEmpty() && uAmount != null && !uAmount.isEmpty()
-                && date != null && !date.isEmpty() && coursesData != null && !coursesData.isEmpty()){
+        if(paymnetId != null && !paymnetId.isEmpty()
+                && pMethod != null && !pMethod.isEmpty()
+                && pType != null && !pType.isEmpty() // Ensure payment type is selected
+                && studentId != null && !studentId.isEmpty()
+                && (pType.equals("Full") || (uAmount != null && !uAmount.isEmpty()
+                && date != null && !date.isEmpty()
+                && coursesData != null && !coursesData.isEmpty()))){
             if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId)){
                 try {
                     if(paymentBO.isStudentExist(studentId)){
+                        if(!paymentBO.isStudentPaymentExist(studentId)){} else {
+                            new Alert(Alert.AlertType.INFORMATION, "Student does not exist!").show();
+                        }
                         try {
                             boolean isSaved = paymentBO.checkOut(payment);
                             if(isSaved){
@@ -467,14 +495,19 @@ public class PaymentController {
                 payment.setType(pType);
                 payment.setMethod(pMethod);
                 payment.setTotalP(amount);
-                payment.setUpfrontP(uAmount);
+                payment.setUpfrontP(pType == "Full" ? null : uAmount);
                 payment.setSId(studentId);
                 payment.setDate(date);
                 payment.getCp().clear(); // Clear the existing course list
                 payment.getCp().addAll(coursesData); // Add the updated course list
 
-                if(paymnetId != null && !paymnetId.isEmpty() && pMethod != null && !pMethod.isEmpty() && pType != null && !pType.isEmpty() && studentId != null && !studentId.isEmpty() && uAmount != null && !uAmount.isEmpty()
-                        && date != null && !date.isEmpty() && coursesData != null && !coursesData.isEmpty()){
+                if(paymnetId != null && !paymnetId.isEmpty()
+                        && pMethod != null && !pMethod.isEmpty()
+                        && pType != null && !pType.isEmpty() // Ensure payment type is selected
+                        && studentId != null && !studentId.isEmpty()
+                        && (pType.equals("Full") || (uAmount != null && !uAmount.isEmpty()
+                        && date != null && !date.isEmpty()
+                        && coursesData != null && !coursesData.isEmpty()))){
                     if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId)){
                         if(paymentBO.isStudentExist(studentId)){
                             try {
@@ -562,5 +595,8 @@ public class PaymentController {
     }
 
     @FXML
-    void txtUAmountOnKeyRelesed(KeyEvent event) {Regex.setTextColor(TextField.DOUBLE, txtUAmount);}
+    void txtUAmountOnKeyRelesed(KeyEvent event) {
+        Regex.setTextColor(TextField.DOUBLE, txtUAmount);
+        calculateDue(Double.parseDouble(lblTotal.getText()));
+    }
 }

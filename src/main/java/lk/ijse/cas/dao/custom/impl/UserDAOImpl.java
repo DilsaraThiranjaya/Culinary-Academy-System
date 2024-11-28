@@ -45,18 +45,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean remove(User entity) {
-        Transaction transaction = null;
-        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
-            transaction = session.beginTransaction();
-            // Delete the user
-            session.delete(entity);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-            return false;
-        }
+        throw new UnsupportedOperationException("This feature is not implemented yet");
     }
 
     @Override

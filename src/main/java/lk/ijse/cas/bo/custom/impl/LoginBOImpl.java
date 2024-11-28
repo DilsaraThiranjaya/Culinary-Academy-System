@@ -13,7 +13,7 @@ public class LoginBOImpl implements LoginBO {
 
     @Override
     public UserDTO searchUserById(String userId) throws SQLException, ClassNotFoundException {
-        User user = userDAO.searchById(new User(userId, null, null, null));
-        return new UserDTO(user.getUserId(), user.getUserName(), user.getPassword(), user.getEmployeeId());
+        User user = userDAO.searchById(new User(userId, null, null, null, null));
+        return user != null ? user.toDTO() : null;
     }
 }

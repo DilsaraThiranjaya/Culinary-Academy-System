@@ -29,7 +29,7 @@ public class PaymentDTO implements Serializable {
         paymentEntity.setDate(this.date);
         paymentEntity.setMethod(this.method);
         paymentEntity.setType(this.type);
-        paymentEntity.setUpfrontPayment(this.upfrontP);
+        paymentEntity.setUpfrontPayment((this.upfrontP == null) ? "_" : this.upfrontP);
         paymentEntity.setTotalPayment(this.totalP);
         paymentEntity.setStudent(null);
 

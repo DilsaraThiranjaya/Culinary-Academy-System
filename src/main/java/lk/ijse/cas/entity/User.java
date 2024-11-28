@@ -31,6 +31,7 @@ public class User implements Serializable {
         userDTO.setUserId(this.userId);
         userDTO.setUserName(this.userName);
         userDTO.setPosition(this.position);
+        userDTO.setPassword(this.password);
         userDTO.setEmail(this.email);
         return userDTO;
     }

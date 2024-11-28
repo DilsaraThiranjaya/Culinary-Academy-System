@@ -459,7 +459,6 @@ public class StudentController {
         String id = txtSearchbySId.getText();
 
         clearFields();
-        txtStudentId.setText(id);
 
         if (id != null && !id.isEmpty()){
             if(Regex.setTextColor(TextField.ID,txtSearchbySId)){
@@ -569,7 +568,7 @@ public class StudentController {
                         this.studentDetailList = getAllStudentDetails(id);
                         loadStudentDetailsTable();
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "Course not found!").show();
+                        new Alert(Alert.AlertType.ERROR, "Student not found!").show();
                         this.studentDetailList = getAllStudentDetails(id);
                         loadStudentDetailsTable();
                     }
@@ -580,7 +579,7 @@ public class StudentController {
                 new Alert(Alert.AlertType.ERROR, "Incorrect value in fields!").show();
             }
         } else {
-            new Alert(Alert.AlertType.WARNING, "Enter a Course Id!").show();
+            new Alert(Alert.AlertType.WARNING, "Enter a Student Id!").show();
         }
     }
 

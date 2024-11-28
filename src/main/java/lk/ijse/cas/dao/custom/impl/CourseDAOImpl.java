@@ -169,14 +169,32 @@ public class CourseDAOImpl implements CourseDAO {
     @Override
     public double getPrice(String selectedCourse) {
         try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // HQL query to fetch the fee for the selected course (as a String)
             String hql = "SELECT c.fee FROM Course c WHERE c.name = :courseName";
-            Query<Double> query = session.createQuery(hql, Double.class);
+
+            // Execute the query
+            Query<String> query = session.createQuery(hql, String.class);
             query.setParameter("courseName", selectedCourse);
-            Double price = query.uniqueResult();
-            return price != null ? price : 0.0;
+
+            // Get the result
+            String priceString = query.uniqueResult();
+
+            // If the result is not null, try to parse it into a double, otherwise return 0.0
+            if (priceString != null) {
+                try {
+                    return Double.parseDouble(priceString); // Convert String to double
+                } catch (NumberFormatException e) {
+                    // If parsing fails, log the error and return 0.0
+                    e.printStackTrace();
+                    return 0.0;
+                }
+            } else {
+                return 0.0; // If the price is null, return 0.0
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return 0.0;
+            return 0.0; // Return 0.0 in case of any exception
         }
     }
+
 }
