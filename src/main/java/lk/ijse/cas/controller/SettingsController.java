@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.input.KeyEvent;
 import lk.ijse.cas.bo.BOFactory;
@@ -12,6 +13,7 @@ import lk.ijse.cas.bo.custom.SettingsBO;
 import lk.ijse.cas.dto.UserDTO;
 import lk.ijse.cas.util.Regex;
 import lk.ijse.cas.util.TextField;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
@@ -47,6 +49,9 @@ public class SettingsController {
     @FXML
     private JFXTextField txtFieldUserNameUd;
 
+    @FXML
+    private Group registorGroup;
+
     private UserDTO user;
 
     SettingsBO settingsBO = (SettingsBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SETTINGS);
@@ -68,6 +73,24 @@ public class SettingsController {
     public void setUser(UserDTO user) {
         this.user = user;
         initializeTextFeildText();
+        setDisabledButton();
+    }
+
+    private void setDisabledButton() {
+        String role = null;
+        try {
+            UserDTO userDTO = settingsBO.getRole(user.getUserId());
+            role = userDTO.getPosition();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (role != null && role.equals("Coordinator")) {
+            setRegistorVisibility();
+        }
+    }
+    private void setRegistorVisibility() {
+        registorGroup.setVisible(false);
     }
 
     @FXML
@@ -83,7 +106,8 @@ public class SettingsController {
                     if (user.getUserId().equals(userId)){
                         UserDTO oldUser = settingsBO.searchUserById(userId);
                         if(confirmPassword.equals(newPassword)) {
-                            UserDTO newUser = new UserDTO(userId, userName, oldUser.getPosition(), newPassword, oldUser.getEmail());
+                            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+                            UserDTO newUser = new UserDTO(userId, userName, oldUser.getPosition(), hashedPassword, oldUser.getEmail());
                             try {
                                 boolean isUpdated = settingsBO.updateUser(newUser,user.getUserId());
                                 if (isUpdated) {
@@ -131,7 +155,8 @@ public class SettingsController {
             if(isValid()){
                 try {
                     if (settingsBO.isUserAvailable(userId)){
-                        UserDTO user = new UserDTO(userId, username, position, password, email);
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                        UserDTO user = new UserDTO(userId, username, position, hashedPassword, email);
 
                         if(confirmPassword.equals(password)) {
                             try {

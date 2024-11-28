@@ -38,4 +38,10 @@ public class SettingsBOImpl implements SettingsBO {
     public boolean registor(UserDTO user) throws SQLException, ClassNotFoundException {
         return userDAO.save(new User(user.getUserId(), user.getUserName(), user.getPosition(), user.getPassword(), user.getEmail()));
     }
+
+    @Override
+    public UserDTO getRole(String userId) throws SQLException, ClassNotFoundException {
+        User user = userDAO.searchById(new User(userId, null, null, null, null));
+        return user.toDTO();
+    }
 }

@@ -14,4 +14,8 @@ public interface CourseDetailsDAO extends CrudDAO<CourseDetails> {
     boolean searchAndDeleteCourses(String sId) throws SQLException, ClassNotFoundException;
 
     List<CourseDetails> getAllCourseDetails(String id) throws SQLException, ClassNotFoundException;
+
+    boolean isStudentPaymentExist(String studentId);
+
+    List<CourseDetails> getAllCourseDetailsByStudentId(String id);
 }

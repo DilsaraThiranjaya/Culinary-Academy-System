@@ -22,6 +22,8 @@ import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.LoginBO;
 import lk.ijse.cas.dto.UserDTO;
 import lk.ijse.cas.util.WindowController;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -76,9 +78,7 @@ public class LoginController {
         UserDTO userDTO = loginBO.searchUserById(userID);
 
         if (userDTO != null) {
-            String dbPw = userDTO.getPassword();
-
-            if (dbPw.equals(password)) {
+            if (BCrypt.checkpw(password, userDTO.getPassword())) {
                 user = userDTO;
                 navigateToTheDashboard();
             } else {

@@ -25,6 +25,7 @@ import lk.ijse.cas.util.EmailSender;
 import lk.ijse.cas.util.WindowController;
 import lk.ijse.cas.util.Regex;
 import lk.ijse.cas.util.TextField;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -124,7 +125,8 @@ public class ForgotPasswordController {
                         if(confirmPass.equals(pass)) {
                             if(Integer.parseInt(otp) == otpCode){
                                 try {
-                                    boolean isUpdated = forgotPasswordBO.changePassword(userId, pass);
+                                    String hashedPassword = BCrypt.hashpw(pass, BCrypt.gensalt());
+                                    boolean isUpdated = forgotPasswordBO.changePassword(userId, hashedPassword);
                                     if (isUpdated) {
                                         new Alert(Alert.AlertType.CONFIRMATION, "Password Changed!").show();
                                         otpCode = -1;

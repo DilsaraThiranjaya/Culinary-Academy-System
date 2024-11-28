@@ -66,11 +66,13 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>javax.naming</groupId>-->
-<!--            <artifactId>jndi</artifactId>-->
-<!--            <version>1.2.1</version>-->
-<!--        </dependency>-->
+
+        <!-- MFX -->
+        <dependency>
+            <groupId>io.github.palexdev</groupId>
+            <artifactId>materialfx</artifactId>
+            <version>11.13.0</version>
+        </dependency>
 
         <!--        Encrypted-->
         <dependency>

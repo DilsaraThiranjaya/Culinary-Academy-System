@@ -1,18 +1,22 @@
 package lk.ijse.cas.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import lk.ijse.cas.bo.BOFactory;
 import lk.ijse.cas.bo.custom.CourseBO;
 import lk.ijse.cas.dto.CourseDTO;
 import lk.ijse.cas.dto.CourseDetailsDTO;
+import lk.ijse.cas.dto.UserDTO;
 import lk.ijse.cas.view.tdm.CourseDetailTm;
 import lk.ijse.cas.view.tdm.CourseTm;
 import lk.ijse.cas.util.Regex;
@@ -80,6 +84,26 @@ public class CourseController {
     @FXML
     private JFXTextField txtStudentId;
 
+    @FXML
+    private JFXButton btnClear;
+
+    @FXML
+    private JFXButton btnRemove;
+
+    @FXML
+    private JFXButton btnSave;
+
+    @FXML
+    private JFXButton btnUpdate;
+
+    @FXML
+    private JFXButton btnStatusUpdate;
+
+    @FXML
+    private Group searchByProgramIdGroup;
+
+    private UserDTO user;
+
     private List<CourseDTO> courseList;
 
     private List<CourseDetailsDTO> courseDetailList;
@@ -99,6 +123,49 @@ public class CourseController {
 
         setCellValueFactory();
         loadCourseTable();
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+        setDisabledButton();
+    }
+
+    private void setDisabledButton() {
+        String role = null;
+        try {
+            UserDTO userDTO = courseBO.getRole(user.getUserId());
+            role = userDTO.getPosition();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(role != null && role.equals("Coordinator")){
+            setTextfieldsReadonly();
+            setButtonVisibility();
+            moveTable();
+        }
+    }
+
+    private void moveTable() {
+        searchByProgramIdGroup.setLayoutY(searchByProgramIdGroup.getLayoutY() + 50);
+    }
+
+    private void setButtonVisibility() {
+        btnSave.setVisible(false);
+        btnUpdate.setVisible(false);
+        btnRemove.setVisible(false);
+        btnClear.setVisible(false);
+        btnStatusUpdate.setVisible(false);
+    }
+
+    private void setTextfieldsReadonly() {
+        txtCourseId.setEditable(false);
+        txtDescription.setEditable(false);
+        txtDuration.setEditable(false);
+        txtName.setEditable(false);
+        txtPrice.setEditable(false);
+        txtStudentId.setVisible(false);
+        cmbStatus.setVisible(false);
     }
 
     private void loadCourseTable() {
@@ -402,7 +469,6 @@ public class CourseController {
         String id = txtSearch.getText();
 
         clearFields();
-        txtCourseId.setText(id);
 
         if (id != null && !id.isEmpty()){
             if(Regex.setTextColor(TextField.ID,txtSearch)){

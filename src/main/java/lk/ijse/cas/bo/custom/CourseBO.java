@@ -3,6 +3,7 @@ package lk.ijse.cas.bo.custom;
 import lk.ijse.cas.bo.SuperBO;
 import lk.ijse.cas.dto.CourseDTO;
 import lk.ijse.cas.dto.CourseDetailsDTO;
+import lk.ijse.cas.dto.UserDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,4 +34,6 @@ public interface CourseBO extends SuperBO {
     public CourseDTO searchByCourseId(String courseId) throws SQLException, ClassNotFoundException ;
 
     public String getCourseName(String courseId) throws SQLException, ClassNotFoundException;
+
+    public UserDTO getRole(String userId) throws SQLException, ClassNotFoundException;
 }

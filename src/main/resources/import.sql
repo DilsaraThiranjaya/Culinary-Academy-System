@@ -1,9 +1,9 @@
 -- Insert Users
 INSERT INTO users (userId, userName, position, password, email)
-VALUES ('Dilsara076', 'Dilsara', 'Admin', '07614', 'dilsarathiranjaya3@gmail.com');
+VALUES ('Dilsara076', 'Dilsara', 'Admin', '$2a$10$OYg5fSvHc9Mcyq/gvr.jnuPh4YIDgzfH6ixrriMLCXyzGZx6TlYqm', 'dilsarathiranjaya3@gmail.com');
 
 INSERT INTO users (userId, userName, position, password, email)
-VALUES ('Dilsara123', 'Thiranjaya', 'Coordinator', '07614', 'dilsarathiranjaya4@gmail.com');
+VALUES ('Dilsara123', 'Thiranjaya', 'Coordinator', '$2a$10$OYg5fSvHc9Mcyq/gvr.jnuPh4YIDgzfH6ixrriMLCXyzGZx6TlYqm', 'dilsarathiranjaya4@gmail.com');
 
 -- Insert Students
 INSERT INTO students (studentId, firstName, lastName, dateOfBirth, gender, admissionDate, NIC, address, contactNo, email)

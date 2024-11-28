@@ -232,7 +232,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </TableView>
-                                    <JFXButton buttonType="RAISED" layoutX="422.0" layoutY="395.0" onAction="#btnSaveOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="saveBtn" text="Save" textFill="WHITE">
+                                    <JFXButton fx:id="btnSave" buttonType="RAISED" layoutX="422.0" layoutY="395.0" onAction="#btnSaveOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="saveBtn" text="Save" textFill="WHITE">
                                        <font>
                                           <Font name="Arial Black" size="14.0" />
                                        </font>
@@ -247,7 +247,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </JFXButton>
-                                    <JFXButton buttonType="RAISED" layoutX="552.0" layoutY="395.0" onAction="#btnRemoveOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="removeBtn" text="Remove" textFill="WHITE">
+                                    <JFXButton fx:id="btnRemove" buttonType="RAISED" layoutX="552.0" layoutY="395.0" onAction="#btnRemoveOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="removeBtn" text="Remove" textFill="WHITE">
                                        <font>
                                           <Font name="Arial Black" size="14.0" />
                                        </font>
@@ -262,7 +262,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </JFXButton>
-                                    <JFXButton buttonType="RAISED" layoutX="682.0" layoutY="395.0" onAction="#btnUpdateOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="updateBtn" text="Update" textFill="WHITE">
+                                    <JFXButton fx:id="btnUpdate" buttonType="RAISED" layoutX="682.0" layoutY="395.0" onAction="#btnUpdateOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="updateBtn" text="Update" textFill="WHITE">
                                        <font>
                                           <Font name="Arial Black" size="14.0" />
                                        </font>
@@ -277,7 +277,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </JFXButton>
-                                    <JFXButton buttonType="RAISED" layoutX="812.0" layoutY="395.0" onAction="#btnClearOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="clearBtn" text="Clear" textFill="WHITE">
+                                    <JFXButton fx:id="btnClear" buttonType="RAISED" layoutX="812.0" layoutY="395.0" onAction="#btnClearOnAction" prefHeight="40.0" prefWidth="120.0" ripplerFill="#E48F45" style="-fx-background-radius: 5;" styleClass="clearBtn" text="Clear" textFill="WHITE">
                                        <font>
                                           <Font name="Arial Black" size="14.0" />
                                        </font>

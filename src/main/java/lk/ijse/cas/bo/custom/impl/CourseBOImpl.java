@@ -5,10 +5,13 @@ import lk.ijse.cas.dao.DAOFactory;
 import lk.ijse.cas.dao.custom.CourseDAO;
 import lk.ijse.cas.dao.custom.CourseDetailsDAO;
 import lk.ijse.cas.dao.custom.StudentDAO;
+import lk.ijse.cas.dao.custom.UserDAO;
 import lk.ijse.cas.dto.CourseDTO;
 import lk.ijse.cas.dto.CourseDetailsDTO;
+import lk.ijse.cas.dto.UserDTO;
 import lk.ijse.cas.entity.Course;
 import lk.ijse.cas.entity.CourseDetails;
+import lk.ijse.cas.entity.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ public class CourseBOImpl implements CourseBO {
     CourseDAO courseDAO = (CourseDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE);
     CourseDetailsDAO courseDetailsDAO = (CourseDetailsDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COURSE_DETAILS);
     StudentDAO studentDAO = (StudentDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.STUDENT);
+    UserDAO userDAO = (UserDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.USER);
 
     @Override
     public List<CourseDetailsDTO> getAllCourseDetails(String id) throws SQLException, ClassNotFoundException {
@@ -80,6 +84,12 @@ public class CourseBOImpl implements CourseBO {
     @Override
     public String getCourseName(String courseId) throws SQLException, ClassNotFoundException {
         return courseDAO.getCourseName(courseId);
+    }
+
+    @Override
+    public UserDTO getRole(String userId) throws SQLException, ClassNotFoundException {
+        User user = userDAO.searchById(new User(userId, null, null, null, null));
+        return user.toDTO();
     }
 
     @Override

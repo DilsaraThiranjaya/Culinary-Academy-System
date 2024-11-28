@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import lk.ijse.cas.bo.SuperBO;
 import lk.ijse.cas.dto.PaymentDTO;
 import lk.ijse.cas.dto.StudentDTO;
+import lk.ijse.cas.view.tdm.CoursePriceTm;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -46,4 +47,8 @@ public interface PaymentBO extends SuperBO {
     public StudentDTO searchByStudentId(String studentId) throws SQLException, ClassNotFoundException ;
 
     public boolean isPaymentExist(String paymentId) throws SQLException, ClassNotFoundException ;
+
+    public boolean isStudentPaymentExist(String studentId);
+
+    public ObservableList<CoursePriceTm> getAllPaymentDetails(String pId) throws SQLException, ClassNotFoundException;
 }

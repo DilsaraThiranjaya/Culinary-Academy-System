@@ -186,4 +186,38 @@ public class CourseDetailsDAOImpl implements CourseDetailsDAO {
             return new ArrayList<>();  // Return an empty list if an error occurs
         }
     }
+
+    @Override
+    public boolean isStudentPaymentExist(String studentId) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            // Define HQL query to check if any CourseDetails exists for the given studentId
+            String hql = "SELECT COUNT(cd) FROM CourseDetails cd WHERE cd.courseDetailsPK.studentId = :studentId";
+
+            // Execute the query and get the count
+            Long count = (Long) session.createQuery(hql)
+                    .setParameter("studentId", studentId)
+                    .uniqueResult();
+
+            // If count > 0, the student payment exists
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Return false in case of an exception
+        }
+    }
+
+    @Override
+    public List<CourseDetails> getAllCourseDetailsByStudentId(String id) {
+        try (Session session = SessionFactoryConfig.getInstance().getSession()) {
+            String hql = "FROM CourseDetails cd WHERE cd.courseDetailsPK.studentId = :studentId";
+            List<CourseDetails> courses = session.createQuery(hql, CourseDetails.class)
+                    .setParameter("studentId", id)
+                    .list();
+            return courses;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
 }

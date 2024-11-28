@@ -13,4 +13,6 @@ public interface SettingsBO extends SuperBO {
     public UserDTO searchUserById(String userId) throws SQLException, ClassNotFoundException;
 
     public boolean registor(UserDTO user) throws SQLException, ClassNotFoundException ;
+
+    public UserDTO getRole(String userId) throws SQLException, ClassNotFoundException;
 }

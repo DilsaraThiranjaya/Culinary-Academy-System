@@ -1,10 +1,12 @@
 package lk.ijse.cas.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -13,6 +15,7 @@ import lk.ijse.cas.bo.custom.CourseBO;
 import lk.ijse.cas.bo.custom.StudentBO;
 import lk.ijse.cas.dto.CourseDetailsDTO;
 import lk.ijse.cas.dto.StudentDTO;
+import lk.ijse.cas.dto.UserDTO;
 import lk.ijse.cas.view.tdm.StudentDetailTm;
 import lk.ijse.cas.view.tdm.StudentTm;
 import lk.ijse.cas.util.Regex;
@@ -114,6 +117,19 @@ public class StudentController {
     @FXML
     private JFXTextField txtStudentId;
 
+    @FXML
+    private JFXButton btnClear;
+
+    @FXML
+    private JFXButton btnRemove;
+
+    @FXML
+    private JFXButton btnSave;
+
+    @FXML
+    private JFXButton btnUpdate;
+
+    private UserDTO user;
 
     private ToggleGroup genderToggleGroup;
 
@@ -138,6 +154,45 @@ public class StudentController {
         this.studentList = getAllStudents();
         setCellValueFactory();
         loadStudentTable();
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+        setDisabledButton();
+    }
+
+    private void setDisabledButton() {
+        String role = null;
+        try {
+            UserDTO userDTO = studentBO.getRole(user.getUserId());
+            role = userDTO.getPosition();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(role != null && role.equals("Coordinator")){
+            setTextfieldsReadonly();
+            setButtonVisibility();
+        }
+    }
+
+    private void setButtonVisibility() {
+        btnSave.setVisible(false);
+        btnUpdate.setVisible(false);
+        btnRemove.setVisible(false);
+        btnClear.setVisible(false);
+    }
+
+    private void setTextfieldsReadonly() {
+        txtStudentId.setEditable(false);
+        txtAddress.setEditable(false);
+        txtCNo.setEditable(false);
+        txtEmail.setEditable(false);
+        txtFName.setEditable(false);
+        txtLName.setEditable(false);
+        txtNic.setEditable(false);
+        dpAdmissionDate.setEditable(false);
+        dpDob.setEditable(false);
     }
 
     private void loadStudentTable() {
@@ -181,7 +236,7 @@ public class StudentController {
                     courseDetails.getStatus()
             );
 
-            tmList.add(studentTm);
+            sdtmList.add(studentTm);
         }
         tableStudentDetail.setItems(sdtmList);
         tableStudentDetail.refresh();
@@ -223,7 +278,7 @@ public class StudentController {
     private List<CourseDetailsDTO> getAllStudentDetails(String id) {
         List<CourseDetailsDTO> list = null;
         try {
-            list = courseBO.getAllCourseDetails(id);
+            list = studentBO.getAllCourseDetailsByStudentId(id);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

@@ -145,8 +145,7 @@ public class PaymentController {
             ObservableList<String> courseList = FXCollections.observableArrayList();
 
             try {
-                for (CourseDTO courseDTO : courseBO.getAllCourses()){
-                    CoursePriceTm coursePriceTm = new CoursePriceTm(courseDTO.getName(), Double.parseDouble(courseDTO.getPrice()));
+                for (CoursePriceTm coursePriceTm : paymentBO.getAllPaymentDetails(payment.getPId())){
                     courseList.add(coursePriceTm.getCourse());
                 }
             } catch (SQLException e) {
@@ -297,7 +296,7 @@ public class PaymentController {
 
                 // Calculate and update the total
                 double total = calculateTotal(coursesData);
-                lblTotal.setText(String.valueOf(total));
+                lblTotal.setText(String.format("%.2f", total));
 
                 tableCourses.setItems(coursesData);
             } else {
@@ -365,18 +364,22 @@ public class PaymentController {
             if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtStudentId)){
                 try {
                     if(paymentBO.isStudentExist(studentId)){
-                        if(!paymentBO.isStudentPaymentExist(studentId)){} else {
-                            new Alert(Alert.AlertType.INFORMATION, "Student does not exist!").show();
-                        }
-                        try {
-                            boolean isSaved = paymentBO.checkOut(payment);
-                            if(isSaved){
-                                new Alert(Alert.AlertType.CONFIRMATION, "Payment saved!").show();
-                                refreshTableView();
-                                sendPaymentConfirmationEmail(paymnetId);
+                        if(!paymentBO.isStudentPaymentExist(studentId)){
+                            try {
+                                boolean isSaved = paymentBO.checkOut(payment);
+                                if(isSaved){
+                                    new Alert(Alert.AlertType.CONFIRMATION, "Payment saved!").show();
+                                    clearFields();
+                                    initializePaymentId();
+                                    cmbCourses.requestFocus();
+                                    refreshTableView();
+                                    sendPaymentConfirmationEmail(paymnetId);
+                                }
+                            } catch (SQLException e) {
+                                new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
                             }
-                        } catch (SQLException e) {
-                            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                        } else {
+                            new Alert(Alert.AlertType.INFORMATION, "Student already Enrolled!").show();
                         }
                     }else {
                         new Alert(Alert.AlertType.ERROR, "Student not found").show();
@@ -395,6 +398,12 @@ public class PaymentController {
     private void sendPaymentConfirmationEmail(String paymnetId) throws SQLException, ClassNotFoundException {
         PaymentDTO payment = paymentBO.searchByPaymentId(paymnetId);
         StudentDTO student = paymentBO.searchByStudentId(payment.getSId());
+
+        String due = null;
+
+        if (!payment.getType().equals("Full")) {
+            due = String.format("%.2f", Double.parseDouble(payment.getTotalP()) - Double.parseDouble(payment.getUpfrontP()));
+        }
 
         if(student.getEmail() != null  && !student.getEmail().isEmpty()){
             ObservableList<String> list = FXCollections.observableArrayList();
@@ -424,7 +433,7 @@ public class PaymentController {
                 emailContent += "    * " + courseName + "\n";
             }
 
-            emailContent += payment.getType().equals("Full") ? "* Total Amount: " + payment.getTotalP() : "* Upfront Amount: " + payment.getUpfrontP() + "\n\n" +
+            emailContent += payment.getType().equals("Full") ? "* Total Amount: " + payment.getTotalP() : "* Upfront Amount: " + payment.getUpfrontP() + "\n" + "* Due Payment: " + due + "\n\n" +
 
                     "Next Steps:\n" +
                     "* With your successful enrollment, you'll soon receive a separate email with access instructions for your chosen programs.\n" +
@@ -451,7 +460,7 @@ public class PaymentController {
 
             // Calculate and update the total
             double total = calculateTotal(coursesData);
-            lblTotal.setText(String.valueOf(total));
+            lblTotal.setText(String.format("%.2f", total));
 
             tableCourses.setItems(coursesData);
 
@@ -480,27 +489,19 @@ public class PaymentController {
             // Now you can use the sqlDate string as needed
         }
 
-        // Get the existing Payment object from the search
-        PaymentDTO payment = null;
-        try {
-            payment = paymentBO.searchByPaymentId(paymnetId);
-        } catch (SQLException | ClassNotFoundException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-            return;
-        }
+        PaymentDTO payment = new PaymentDTO();
 
         // Update the fields of the existing Payment object
         try {
-            if (payment != null && paymentBO.isPaymentExist(paymnetId)) {
+            if (paymentBO.isPaymentExist(paymnetId)) {
+                payment.setPId(paymnetId);
                 payment.setType(pType);
                 payment.setMethod(pMethod);
                 payment.setTotalP(amount);
                 payment.setUpfrontP(pType == "Full" ? null : uAmount);
                 payment.setSId(studentId);
                 payment.setDate(date);
-                payment.getCp().clear(); // Clear the existing course list
-                payment.getCp().addAll(coursesData); // Add the updated course list
-
+                payment.setCp(coursesData); // Add the updated course list
                 if(paymnetId != null && !paymnetId.isEmpty()
                         && pMethod != null && !pMethod.isEmpty()
                         && pType != null && !pType.isEmpty() // Ensure payment type is selected
@@ -514,8 +515,12 @@ public class PaymentController {
                                 boolean isUpdated = paymentBO.update(payment);
                                 if (isUpdated) {
                                     new Alert(Alert.AlertType.CONFIRMATION, "Payment updated!").show();
+                                    clearFields();
+                                    initializePaymentId();
+                                    cmbCourses.requestFocus();
                                     refreshTableView();
                                     clearFields();
+                                    sendPaymentConfirmationEmail(paymnetId);
                                 }
                             } catch (SQLException e) {
                                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -542,20 +547,23 @@ public class PaymentController {
         String id = txtSearch.getText();
 
         clearFields();
-        lblPaymentId.setText(id);
 
         if (id != null && !id.isEmpty()){
             if(Regex.setTextColor(lk.ijse.cas.util.TextField.ID, txtSearch)){
                 try {
-                    PaymentDTO payment = paymentBO.searchByPaymentId(id);
 
-                    if (payment != null){
+
+                    if (paymentBO.isPaymentExist(id)){
+                        PaymentDTO payment = paymentBO.searchByPaymentId(id);
+
                         lblPaymentId.setText(payment.getPId());
                         lblDate.setText(payment.getDate());
                         cmbPType.setValue(payment.getType());
                         cmbPMethod.setValue(payment.getMethod());
                         txtStudentId.setText(payment.getSId());
-                        txtUAmount.setText(String.valueOf(payment.getTotalP()));
+                        if(!payment.getType().equals("Full")) {
+                            txtUAmount.setText(String.format("%.2f", payment.getUpfrontP()));
+                        }
 
                         // Update coursesData list
                         coursesData.clear(); // Clear existing courses
@@ -566,7 +574,7 @@ public class PaymentController {
                         }
 
                         double total = calculateTotal(coursesData);
-                        lblTotal.setText(String.valueOf(total));
+                        lblTotal.setText(String.format("%.2f", total));
 
                         tableCourses.setItems(coursesData); // Update table view
 
@@ -596,7 +604,10 @@ public class PaymentController {
 
     @FXML
     void txtUAmountOnKeyRelesed(KeyEvent event) {
-        Regex.setTextColor(TextField.DOUBLE, txtUAmount);
         calculateDue(Double.parseDouble(lblTotal.getText()));
+        if(!(cmbPType.getValue() == null)) {
+            if (!(cmbPType.getValue().equals("Full"))) Regex.setTextColor(TextField.DOUBLE, txtUAmount);
+
+        }
     }
 }

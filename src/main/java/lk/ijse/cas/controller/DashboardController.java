@@ -81,7 +81,6 @@ public class DashboardController {
 
 
     public void initialize() {
-        loadPage("Student_page");
         handleSelection(btnStudents,iconStudents);
         sidebarButtonHoverUtilize();
     }
@@ -100,6 +99,7 @@ public class DashboardController {
         this.user = user;
         setUiUsername();
         setDisabledButton();
+        loadPage("Student_page");
     }
 
     private void setDisabledButton() {
@@ -199,9 +199,16 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/lk.ijse.cas/" + page + ".fxml"));
             root = loader.load();
 
-            if (page.equals("Setting_page")) {
+            // Check which page is being loaded and pass the user object
+            if (page.equals("Student_page")) {
+                StudentController studentController = loader.getController();
+                studentController.setUser(user); // Pass the user to the StudentController
+            } else if (page.equals("Course_page")) {
+                CourseController courseController = loader.getController();
+                courseController.setUser(user); // Pass the user to the SettingsController
+            } else if (page.equals("Setting_page")) {
                 SettingsController settingsController = loader.getController();
-                settingsController.setUser(user);
+                settingsController.setUser(user); // Pass the user to the SettingsController
             }
 
         } catch (IOException e) {

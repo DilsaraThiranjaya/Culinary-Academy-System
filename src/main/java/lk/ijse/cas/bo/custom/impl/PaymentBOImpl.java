@@ -11,6 +11,7 @@ import lk.ijse.cas.entity.Payment;
 import lk.ijse.cas.entity.PaymentDetails;
 import lk.ijse.cas.entity.Student;
 import lk.ijse.cas.util.SessionFactoryConfig;
+import lk.ijse.cas.view.tdm.CoursePriceTm;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -191,5 +192,15 @@ public class PaymentBOImpl implements PaymentBO {
     @Override
     public boolean isPaymentExist(String paymentId) throws SQLException, ClassNotFoundException {
         return paymentDAO.isExist(new Payment(paymentId, null, null, null, null, null, null));
+    }
+
+    @Override
+    public boolean isStudentPaymentExist(String studentId) {
+        return courseDetailsDAO.isStudentPaymentExist(studentId);
+    }
+
+    @Override
+    public ObservableList<CoursePriceTm> getAllPaymentDetails(String pId) throws SQLException, ClassNotFoundException {
+        return paymentDetailsDAO.getPaymentDetails(pId);
     }
 }
